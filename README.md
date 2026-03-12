@@ -18,7 +18,19 @@ REST API project built with Laravel 10 to manage dynamic subdomain routing for *
 
 - **Backend**: Laravel 10 (PHP 8.1)
 - **Database**: MySQL
-- **Tooling**: Composer, Artisan
+- **Integration**: Cloudflare API (Optional for automation)
+
+## 🔑 Cloudflare Integration & Tokens
+
+Aplikasi ini bisa dikembangkan lebih lanjut untuk otomatis update DNS/Tunnel di Cloudflare. Untuk itu, bos butuh beberapa token berikut di `.env`:
+
+1. **Cloudflare API Token**:
+   - Ke [Dash Cloudflare - API Tokens](https://dash.cloudflare.com/profile/api-tokens).
+   - Buat token dengan permission `Zone.DNS` dan `Zone.Zone`.
+2. **Account ID & Zone ID**:
+   - Bisa dilihat di halaman **Overview** domain bos di dashboard Cloudflare (sebelah kanan bawah).
+3. **Tunnel ID**:
+   - Didapat saat bos bikin tunnel di `Cloudflare Zero Trust -> Access -> Tunnels`.
 
 ## 📋 API Reference
 
