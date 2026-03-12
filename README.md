@@ -60,8 +60,8 @@ Aplikasi ini bisa dikembangkan lebih lanjut untuk otomatis update DNS/Tunnel di 
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/cloudflared.git
-   cd cloudflared
+   git clone https://github.com/mazkama/flarebridge.git
+   cd flarebridge
    ```
 
 2. **Install dependencies**:
