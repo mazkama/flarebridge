@@ -74,13 +74,6 @@ REST API project built with Laravel 10 to manage dynamic subdomain routing for *
    php artisan serve
    ```
 
-## 🗺️ Roadmap
-
-- [ ] **Dashboard UI**: A premium web interface to manage mappings.
-- [ ] **Cloudflare API Sync**: Automatically update Cloudflare Tunnel configuration.
-- [ ] **Health Monitoring**: Monitor the uptime of services running on mapped ports.
-- [ ] **Auth Layer**: API Key or Sanctum authentication for secure access.
-
 ## 📄 License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
