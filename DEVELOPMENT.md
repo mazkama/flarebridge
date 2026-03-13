@@ -62,9 +62,13 @@ API ini dirancang untuk berintegrasi dengan **Cloudflare Zero Trust Tunnel**.
 
 | Method | Endpoint | Description |
 | --- | --- | --- |
-| `GET` | `/api/subdomains` | List semua mapping |
-| `POST` | `/api/subdomains` | Create mapping baru (Auto port) |
-| `DELETE` | `/api/subdomains/{id}` | Hapus mapping |
+| `GET` | `/api/domains` | List semua domain & config Cloudflare |
+| `POST` | `/api/domains` | Tambah domain baru + config Cloudflare |
+| `PUT` | `/api/domains/{id}` | Update config Cloudflare domain |
+| `DELETE` | `/api/domains/{id}` | Hapus domain |
+| `GET` | `/api/subdomains` | List semua mapping subdomain |
+| `POST` | `/api/subdomains` | Create mapping baru (Auto Sync CF) |
+| `DELETE` | `/api/subdomains/{id}` | Hapus mapping (Auto Sync CF) |
 
 **Contoh Payload POST:**
 ```json

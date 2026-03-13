@@ -87,10 +87,19 @@ class SubdomainController extends Controller
 
             // === Cloudflare Sync ===
             // 1. Upsert DNS
-            $this->cloudflare->upsertDnsRecord($service->subdomain, $domain->domain);
+            $this->cloudflare->upsertDnsRecord(
+                $service->subdomain, 
+                $domain->domain, 
+                $domain->zone_id, 
+                $domain->tunnel_id
+            );
             
             // 2. Update Tunnel Ingress
-            $this->cloudflare->updateTunnelIngress(Service::all());
+            $this->cloudflare->updateTunnelIngress(
+                Service::where('domain_id', $domain->id)->get(), 
+                $domain->account_id, 
+                $domain->tunnel_id
+            );
 
             return response()->json([
                 'status' => 'success',
@@ -105,7 +114,8 @@ class SubdomainController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to create subdomain or sync with Cloudflare',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'hint' => 'Check your Cloudflare Token and Permissions in .env'
             ], 500);
         }
     }
@@ -125,18 +135,26 @@ class SubdomainController extends Controller
         }
 
         try {
-            $domainName = $service->domain->domain;
+            $domain = $service->domain;
+            $domainName = $domain->domain;
             $subdomain = $service->subdomain;
+            $zoneId = $domain->zone_id;
+            $accountId = $domain->account_id;
+            $tunnelId = $domain->tunnel_id;
 
             // Delete From DB
             $service->delete();
 
             // === Cloudflare Sync ===
             // 1. Delete DNS
-            $this->cloudflare->deleteDnsRecord($subdomain, $domainName);
+            $this->cloudflare->deleteDnsRecord($subdomain, $domainName, $zoneId);
 
             // 2. Update Tunnel Ingress
-            $this->cloudflare->updateTunnelIngress(Service::all());
+            $this->cloudflare->updateTunnelIngress(
+                Service::where('domain_id', $domain->id)->get(), 
+                $accountId, 
+                $tunnelId
+            );
 
             return response()->json([
                 'status' => 'success',
@@ -147,7 +165,8 @@ class SubdomainController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to delete service or sync with Cloudflare',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'hint' => 'Check your Cloudflare Token and Permissions in .env'
             ], 500);
         }
     }

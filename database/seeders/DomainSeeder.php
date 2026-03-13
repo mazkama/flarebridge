@@ -14,7 +14,11 @@ class DomainSeeder extends Seeder
     {
         \App\Models\Domain::updateOrCreate(
             ['domain' => 'mazkama.web.id'],
-            ['zone_id' => null]
+            [
+                'zone_id' => env('CLOUDFLARE_ZONE_ID'),
+                'account_id' => env('CLOUDFLARE_ACCOUNT_ID'),
+                'tunnel_id' => env('CLOUDFLARE_TUNNEL_ID'),
+            ]
         );
     }
 }

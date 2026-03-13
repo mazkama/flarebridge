@@ -36,14 +36,27 @@ Aplikasi ini **otomatis** melakukan sinkronisasi dengan Cloudflare. Pastikan bos
 
 | Endpoint | Method | Description |
 | :--- | :--- | :--- |
+| `/api/domains` | `POST` | Register a new domain for subdomain management |
 | `/api/subdomains` | `GET` | Retrieve all registered subdomains |
 | `/api/subdomains` | `POST` | Create a new subdomain (Auto-assigns port) |
 | `/api/subdomains/{id}` | `DELETE` | Remove a subdomain mapping |
 
-### Example Create Request
+### Example Request (Domain Management)
+`POST /api/domains`
 ```json
 {
-    "domain_id": 1,
+    "domain": "another-domain.id",
+    "zone_id": "YOUR_CLOUDFLARE_ZONE_ID",
+    "account_id": "YOUR_CLOUDFLARE_ACCOUNT_ID",
+    "tunnel_id": "YOUR_CLOUDFLARE_TUNNEL_ID"
+}
+```
+
+### Example Request (Subdomain Management)
+`POST /api/subdomains`
+```json
+{
+    "domain_id": 2,
     "subdomain": "my-cool-app"
 }
 ```
@@ -62,10 +75,6 @@ Aplikasi ini **otomatis** melakukan sinkronisasi dengan Cloudflare. Pastikan bos
 
 ## ⚙️ Installation
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/mazkama/flarebridge.git
-   cd flarebridge
    ```
 
 2. **Install dependencies**:

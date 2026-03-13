@@ -9,7 +9,7 @@ class Domain extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['domain', 'zone_id'];
+    protected $fillable = ['domain', 'zone_id', 'account_id', 'tunnel_id'];
 
     public function services()
     {

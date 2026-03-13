@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\SubdomainController;
+use App\Http\Controllers\Api\DomainController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,8 +20,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-use App\Http\Controllers\Api\SubdomainController;
+// Domain Management
+Route::apiResource('domains', DomainController::class);
 
+// Subdomain Management
 Route::get('/subdomains', [SubdomainController::class, 'index']);
 Route::post('/subdomains', [SubdomainController::class, 'store']);
 Route::delete('/subdomains/{id}', [SubdomainController::class, 'destroy']);
