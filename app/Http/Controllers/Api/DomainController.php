@@ -73,7 +73,19 @@ class DomainController extends Controller
             ], 422);
         }
 
-        $domain = \App\Models\Domain::create($request->all());
+        $domainData = $request->all();
+
+        // Auto-fetch tunnel name if label is empty
+        if (empty($request->name)) {
+            try {
+                $tunnel = $this->cloudflare->getTunnel($request->account_id, $request->tunnel_id);
+                $domainData['name'] = $tunnel['name'] ?? null;
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning("Could not auto-fetch tunnel name: " . $e->getMessage());
+            }
+        }
+
+        $domain = \App\Models\Domain::create($domainData);
 
         return response()->json([
             'status' => 'success',
@@ -115,6 +127,23 @@ class DomainController extends Controller
                 'status' => 'error',
                 'message' => 'Domain not found'
             ], 404);
+        }
+
+        if ($request->has('domain') || $request->has('tunnel_id')) {
+            $domainName = $request->domain ?? $domain->domain;
+            $tunnelId = $request->tunnel_id ?? $domain->tunnel_id;
+            
+            $exists = \App\Models\Domain::where('domain', $domainName)
+                ->where('tunnel_id', $tunnelId)
+                ->where('id', '!=', $id)
+                ->exists();
+            
+            if ($exists) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'This domain is already registered with this Tunnel ID.'
+                ], 422);
+            }
         }
 
         if ($request->has('zone_id') || $request->has('account_id')) {

@@ -68,8 +68,9 @@
                                     <div class="flex items-center space-x-3 overflow-hidden">
                                         <div class="w-2 h-2 rounded-full flex-shrink-0" :class="selectedDomain?.id === domain.id ? 'bg-indigo-400' : 'bg-slate-600'"></div>
                                         <div class="flex flex-col min-w-0">
-                                            <span class="font-medium truncate">{{ domain.domain }}</span>
-                                            <span class="text-[10px] text-slate-500 truncate font-mono">ID: {{ shortId(domain.tunnel_id) }}</span>
+                                            <span class="font-medium truncate">{{ domain.name || domain.domain }}</span>
+                                            <span v-if="domain.name" class="text-[9px] text-slate-500 truncate">{{ domain.domain }} • {{ shortId(domain.tunnel_id) }}</span>
+                                            <span v-else class="text-[10px] text-slate-500 truncate font-mono">ID: {{ shortId(domain.tunnel_id) }}</span>
                                         </div>
                                     </div>
                                     <div class="flex items-center space-x-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
@@ -315,6 +316,19 @@
                 <div class="space-y-4 mb-8">
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
+                            {{ t('dashboard.identity_label') }}
+                            <div class="group relative ml-2">
+                                <span class="cursor-help text-slate-600 hover:text-indigo-400">?</span>
+                                <div class="absolute bottom-full left-0 mb-2 w-48 p-2 bg-slate-800 text-[10px] rounded shadowing-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                                    {{ t('dashboard.identity_hint') }}
+                                </div>
+                            </div>
+                        </label>
+                        <input v-model="domainForm.name" type="text" :placeholder="t('dashboard.identity_placeholder')"
+                            class="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
                             {{ t('onboarding.domain_label') }}
                             <div class="group relative ml-2">
                                 <span class="cursor-help text-slate-600 hover:text-indigo-400">?</span>
@@ -441,6 +455,7 @@ const triggerConfirm = (title, message, action) => {
 const domainForm = reactive({
     id: null,
     domain: '',
+    name: '',
     zone_id: '',
     account_id: '',
     tunnel_id: '',
@@ -526,6 +541,7 @@ const editDomain = (domain) => {
     editingDom.value = true;
     domainForm.id = domain.id;
     domainForm.domain = domain.domain;
+    domainForm.name = domain.name || '';
     domainForm.zone_id = domain.zone_id;
     domainForm.account_id = domain.account_id;
     domainForm.tunnel_id = domain.tunnel_id;
@@ -554,6 +570,7 @@ const closeDomainModal = () => {
     editingDom.value = null;
     domainForm.id = null;
     domainForm.domain = '';
+    domainForm.name = '';
     domainForm.zone_id = '';
     domainForm.account_id = '';
     domainForm.tunnel_id = '';

@@ -208,4 +208,19 @@ class CloudflareService
 
         return true;
     }
+
+    /**
+     * Get Tunnel Details.
+     */
+    public function getTunnel($accountId, $tunnelId)
+    {
+        $response = $this->getRequest()
+            ->get("{$this->baseUrl}/accounts/{$accountId}/cfd_tunnel/{$tunnelId}");
+
+        if (!$response->successful()) {
+            throw new \Exception("Cloudflare API Error (Get Tunnel): " . $response->body());
+        }
+
+        return $response->json()['result'];
+    }
 }
