@@ -99,4 +99,25 @@ class SettingController extends Controller
             ]
         ]);
     }
+
+    public function resetSystem(Request $request)
+    {
+        // 1. Clear all mappings and domains
+        \App\Models\Service::query()->delete();
+        \App\Models\Domain::query()->delete();
+        
+        // 2. Clear all settings
+        \App\Models\Setting::query()->delete();
+        
+        // 3. Delete all Personal Access Tokens
+        \Illuminate\Support\Facades\DB::table('personal_access_tokens')->delete();
+        
+        // 4. Delete all users
+        \App\Models\User::query()->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'System has been reset successfully. Redirecting to onboarding.'
+        ]);
+    }
 }

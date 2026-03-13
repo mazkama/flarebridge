@@ -62,6 +62,7 @@ FlareBridge features a **Modern Onboarding Flow**. You no longer need to manuall
 | `/api/v1/subdomains` | `POST` | Create a new subdomain (Auto-sync) | Yes |
 | `/api/v1/subdomains/{id}` | `DELETE` | Remove a subdomain mapping | Yes |
 | `/api/v1/settings` | `GET/POST` | Manage app settings & UI mode | Yes |
+| `/api/v1/system/reset` | `POST` | Wipe all data & return to onboarding | Yes |
 
 ### Example Request (Domain Management)
 `POST /api/v1/domains`

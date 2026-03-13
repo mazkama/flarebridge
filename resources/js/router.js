@@ -33,16 +33,20 @@ router.beforeEach(async (to, from, next) => {
         const { data } = await axios.get('/api/onboarding-check');
         const onboardingCompleted = data.data.onboarding_completed;
 
-        if (!onboardingCompleted && to.name !== 'Onboarding') {
-            return next({ name: 'Onboarding' });
+        console.log('Onboarding check:', onboardingCompleted, 'Navigating to:', to.path);
+
+        if (!onboardingCompleted && to.path !== '/onboarding') {
+            console.log('Redirecting to /onboarding');
+            return next('/onboarding');
         }
         
-        if (onboardingCompleted && to.name === 'Onboarding') {
-            return next({ name: 'Home' });
+        if (onboardingCompleted && to.path === '/onboarding') {
+            return next('/');
         }
 
         next();
     } catch (error) {
+        console.error('Router check failed:', error);
         next();
     }
 });
