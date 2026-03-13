@@ -140,13 +140,20 @@
                         <p class="text-slate-400 text-sm leading-relaxed mb-8">{{ confirmModal.message }}</p>
                         
                         <div class="flex space-x-3">
-                            <button @click="confirmModal.show = false" 
-                                class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl transition-all">
+                            <button @click="confirmModal.show = false" :disabled="confirmModal.loading"
+                                class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl transition-all disabled:opacity-50">
                                 {{ t('common.cancel') }}
                             </button>
-                            <button @click="confirmModal.action" 
-                                class="flex-1 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition-all active:scale-95">
-                                {{ t('common.update') }}
+                            <button @click="confirmModal.action" :disabled="confirmModal.loading"
+                                :class="confirmModal.danger ? 'bg-red-500 hover:bg-red-600 shadow-red-500/20' : 'bg-indigo-500 hover:bg-indigo-600 shadow-indigo-500/20'"
+                                class="flex-1 py-3 text-white font-bold rounded-xl shadow-lg transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center">
+                                <span v-if="confirmModal.loading" class="mr-2">
+                                    <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </span>
+                                {{ confirmModal.loading ? t('common.saving') : (confirmModal.danger ? t('common.delete') : t('common.update')) }}
                             </button>
                         </div>
                     </div>
@@ -200,6 +207,8 @@ const confirmModal = reactive({
     show: false,
     title: '',
     message: '',
+    loading: false,
+    danger: false,
     action: () => {}
 });
 
@@ -211,12 +220,19 @@ const showToast = (title, message, type = 'success') => {
     }, 4000);
 };
 
-const triggerConfirm = (title, message, action) => {
+const triggerConfirm = (title, message, action, danger = false) => {
     confirmModal.title = title;
     confirmModal.message = message;
-    confirmModal.action = () => {
-        action();
-        confirmModal.show = false;
+    confirmModal.danger = danger;
+    confirmModal.loading = false;
+    confirmModal.action = async () => {
+        confirmModal.loading = true;
+        try {
+            await action();
+            confirmModal.show = false;
+        } finally {
+            confirmModal.loading = false;
+        }
     };
     confirmModal.show = true;
 };
