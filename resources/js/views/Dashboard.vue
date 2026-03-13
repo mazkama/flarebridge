@@ -656,16 +656,22 @@ const logout = async () => {
     }
 };
 
-const performReset = async () => {
-    resetting.value = true;
-    try {
-        await axios.post('/api/v1/system/reset');
-        localStorage.removeItem('flare_token');
-        window.location.href = '/onboarding';
-    } catch (error) {
-        alert(t('dashboard.reset_error') + ': ' + (error.response?.data?.message || error.message));
-        resetting.value = false;
-    }
+const performReset = () => {
+    triggerConfirm(
+        t('dashboard.reset_confirm_title'),
+        t('dashboard.reset_confirm_desc'),
+        async () => {
+            resetting.value = true;
+            try {
+                await axios.post('/api/v1/system/reset');
+                localStorage.removeItem('flare_token');
+                window.location.href = '/onboarding';
+            } catch (error) {
+                showToast(t('common.error'), t('dashboard.reset_error') + ': ' + (error.response?.data?.message || error.message));
+                resetting.value = false;
+            }
+        }
+    );
 };
 </script>
 
