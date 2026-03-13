@@ -20,8 +20,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Domain Management
-Route::apiResource('domains', DomainController::class);
+Route::prefix('v1')->group(function () {
+    // Domain Management
+    Route::apiResource('domains', DomainController::class);
 
-// Subdomain Management
-Route::apiResource('subdomains', SubdomainController::class)->only(['index', 'store', 'destroy']);
+    // Subdomain Management
+    Route::apiResource('subdomains', SubdomainController::class)->only(['index', 'store', 'destroy']);
+});

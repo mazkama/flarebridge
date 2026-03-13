@@ -36,13 +36,13 @@ Aplikasi ini **otomatis** melakukan sinkronisasi dengan Cloudflare. Pastikan bos
 
 | Endpoint | Method | Description |
 | :--- | :--- | :--- |
-| `/api/domains` | `POST` | Register a new domain for subdomain management |
-| `/api/subdomains` | `GET` | Retrieve all registered subdomains |
-| `/api/subdomains` | `POST` | Create a new subdomain (Auto-assigns port) |
-| `/api/subdomains/{id}` | `DELETE` | Remove a subdomain mapping |
+| `/api/v1/domains` | `POST` | Register a new domain for subdomain management |
+| `/api/v1/subdomains` | `GET` | Retrieve all registered subdomains |
+| `/api/v1/subdomains` | `POST` | Create a new subdomain (Auto-assigns port) |
+| `/api/v1/subdomains/{id}` | `DELETE` | Remove a subdomain mapping |
 
 ### Example Request (Domain Management)
-`POST /api/domains`
+`POST /api/v1/domains`
 ```json
 {
     "domain": "another-domain.id",
@@ -53,7 +53,7 @@ Aplikasi ini **otomatis** melakukan sinkronisasi dengan Cloudflare. Pastikan bos
 ```
 
 ### Example Request (Subdomain Management)
-`POST /api/subdomains`
+`POST /api/v1/subdomains`
 ```json
 {
     "domain_id": 2,
