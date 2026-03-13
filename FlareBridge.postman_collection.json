@@ -1,11 +1,70 @@
 {
 	"info": {
 		"_postman_id": "c7a8b9d0-1e2f-4a3b-8c9d-0e1f2a3b4c5d",
-		"name": "FlareBridge API (v1) - Secure",
-		"description": "API FlareBridge terproteksi dengan Laravel Sanctum. Mendukung multi-domain dan sinkronisasi Cloudflare otomatis.",
+		"name": "FlareBridge API (v1.1) - Secure",
+		"description": "API FlareBridge terproteksi dengan Laravel Sanctum. Mendukung multi-domain, validasi kredensial, dan sinkronisasi Cloudflare otomatis.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@mazkama.web.id\",\n    \"password\": \"YOUR_PASSWORD\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
 		{
 			"name": "Setup & Onboarding",
 			"item": [
@@ -28,8 +87,7 @@
 								"api",
 								"onboarding-check"
 							]
-						},
-						"description": "Mengecek apakah onboarding sudah selesai atau belum."
+						}
 					},
 					"response": []
 				},
@@ -59,74 +117,6 @@
 							"path": [
 								"api",
 								"setup"
-							]
-						},
-						"description": "Menjalankan setup awal aplikasi, konfigurasi Cloudflare, registrasi admin, dan menerbitkan token pertama."
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Settings",
-			"item": [
-				{
-					"name": "Get Settings",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/settings?keys=app_mode,cloudflare_email",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"settings"
-							],
-							"query": [
-								{
-									"key": "keys",
-									"value": "app_mode,cloudflare_email"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Settings",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"settings\": {\n        \"app_mode\": \"dashboard\"\n    }\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/settings",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"settings"
 							]
 						}
 					},
@@ -169,10 +159,6 @@
 							{
 								"key": "Accept",
 								"value": "application/json"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
 							}
 						],
 						"body": {
@@ -194,41 +180,12 @@
 					"response": []
 				},
 				{
-					"name": "Show Domain",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/domains/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"domains",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Update Domain",
 					"request": {
 						"method": "PUT",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json"
-							},
-							{
-								"key": "Content-Type",
 								"value": "application/json"
 							}
 						],
@@ -255,12 +212,6 @@
 					"name": "Delete Domain",
 					"request": {
 						"method": "DELETE",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/domains/1",
 							"host": [
@@ -285,12 +236,6 @@
 					"name": "List Subdomains",
 					"request": {
 						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/subdomains?domain_id=1",
 							"host": [
@@ -315,16 +260,6 @@
 					"name": "Create Subdomain",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"domain_id\": 1,\n    \"subdomain\": \"myapp\"\n}"
@@ -344,15 +279,32 @@
 					"response": []
 				},
 				{
+					"name": "Update Subdomain",
+					"request": {
+						"method": "PUT",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"subdomain\": \"newname\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/subdomains/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"subdomains",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Delete Subdomain",
 					"request": {
 						"method": "DELETE",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/subdomains/1",
 							"host": [
@@ -377,12 +329,6 @@
 					"name": "Reset System",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/system/reset",
 							"host": [
@@ -394,8 +340,46 @@
 								"system",
 								"reset"
 							]
-						},
-						"description": "Menghapus seluruh data (Domain, Mapping, Settings, Personal Access Tokens, User) dan mengembalikan aplikasi ke kondisi Onboarding."
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "View Token",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/system/token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"system",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Renew Token",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/system/token/renew",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"system",
+								"token",
+								"renew"
+							]
+						}
 					},
 					"response": []
 				}
@@ -412,26 +396,6 @@
 			}
 		]
 	},
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		}
-	],
 	"variable": [
 		{
 			"key": "baseUrl",
@@ -440,7 +404,7 @@
 		},
 		{
 			"key": "apiToken",
-			"value": "GANTI_DENGAN_TOKEN_SETUP_ATAU_ARTISAN",
+			"value": "TOKEN_FROM_LOGIN_OR_SETUP",
 			"type": "string"
 		}
 	]

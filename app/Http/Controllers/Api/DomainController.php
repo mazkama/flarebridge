@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 
 class DomainController extends Controller
 {
+    protected $cloudflare;
+
+    public function __construct(\App\Services\CloudflareService $cloudflare)
+    {
+        $this->cloudflare = $cloudflare;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -37,6 +44,21 @@ class DomainController extends Controller
                 'status' => 'error',
                 'message' => 'Validation failed',
                 'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Validate Cloudflare Credentials
+        try {
+            $this->cloudflare->verifyCredentials(
+                \App\Models\Setting::get('cloudflare_email'),
+                \App\Models\Setting::get('cloudflare_api_token'),
+                $request->zone_id,
+                $request->account_id
+            );
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Cloudflare validation failed: ' . $e->getMessage()
             ], 422);
         }
 
@@ -82,6 +104,22 @@ class DomainController extends Controller
                 'status' => 'error',
                 'message' => 'Domain not found'
             ], 404);
+        }
+
+        if ($request->has('zone_id') || $request->has('account_id')) {
+            try {
+                $this->cloudflare->verifyCredentials(
+                    \App\Models\Setting::get('cloudflare_email'),
+                    \App\Models\Setting::get('cloudflare_api_token'),
+                    $request->zone_id ?? $domain->zone_id,
+                    $request->account_id ?? $domain->account_id
+                );
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Cloudflare validation failed: ' . $e->getMessage()
+                ], 422);
+            }
         }
 
         $domain->update($request->all());

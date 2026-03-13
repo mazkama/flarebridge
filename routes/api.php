@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SubdomainController;
 use App\Http\Controllers\Api\DomainController;
 use App\Http\Controllers\Api\SettingController;
+use App\Http\Controllers\Api\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,9 @@ use App\Http\Controllers\Api\SettingController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 Route::get('/onboarding-check', [SettingController::class, 'checkOnboarding']);
 Route::post('/setup', [SettingController::class, 'setup']);
@@ -37,4 +41,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     // System Operations
     Route::post('/system/reset', [SettingController::class, 'resetSystem']);
+    Route::get('/system/token', [SettingController::class, 'viewToken']);
+    Route::post('/system/token/renew', [SettingController::class, 'renewToken']);
 });

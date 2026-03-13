@@ -140,4 +140,43 @@ class CloudflareService
 
         return $response->successful();
     }
+
+    /**
+     * Verify Cloudflare Credentials.
+     */
+    public function verifyCredentials($email, $token, $zoneId = null, $accountId = null)
+    {
+        // 1. Verify Token
+        $tokenResponse = Http::withToken($token)->get("{$this->baseUrl}/user/tokens/verify");
+        
+        if (!$tokenResponse->successful() || $tokenResponse->json()['result']['status'] !== 'active') {
+            throw new \Exception("Invalid Cloudflare API Token or Token is not active.");
+        }
+
+        // 2. Verify Zone (optional)
+        if ($zoneId) {
+            $zoneResponse = Http::withHeaders([
+                'X-Auth-Email' => $email,
+                'X-Auth-Key' => $token,
+            ])->get("{$this->baseUrl}/zones/{$zoneId}");
+
+            if (!$zoneResponse->successful()) {
+                throw new \Exception("Invalid Zone ID or insufficient permissions.");
+            }
+        }
+
+        // 3. Verify Account (optional)
+        if ($accountId) {
+            $accountResponse = Http::withHeaders([
+                'X-Auth-Email' => $email,
+                'X-Auth-Key' => $token,
+            ])->get("{$this->baseUrl}/accounts/{$accountId}");
+
+            if (!$accountResponse->successful()) {
+                throw new \Exception("Invalid Account ID or insufficient permissions.");
+            }
+        }
+
+        return true;
+    }
 }

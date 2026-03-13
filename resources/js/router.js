@@ -2,9 +2,15 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Onboarding from './views/Onboarding.vue';
 import Dashboard from './views/Dashboard.vue';
 import Docs from './views/Docs.vue';
+import Login from './views/Login.vue';
 import axios from 'axios';
 
 const routes = [
+    {
+        path: '/login',
+        name: 'Login',
+        component: Login,
+    },
     {
         path: '/onboarding',
         name: 'Onboarding',
@@ -32,15 +38,21 @@ router.beforeEach(async (to, from, next) => {
     try {
         const { data } = await axios.get('/api/onboarding-check');
         const onboardingCompleted = data.data.onboarding_completed;
-
-        console.log('Onboarding check:', onboardingCompleted, 'Navigating to:', to.path);
+        const hasToken = !!localStorage.getItem('flare_token');
 
         if (!onboardingCompleted && to.path !== '/onboarding') {
-            console.log('Redirecting to /onboarding');
             return next('/onboarding');
         }
         
         if (onboardingCompleted && to.path === '/onboarding') {
+            return next('/');
+        }
+
+        if (onboardingCompleted && !hasToken && to.path !== '/login') {
+            return next('/login');
+        }
+
+        if (hasToken && to.path === '/login') {
             return next('/');
         }
 

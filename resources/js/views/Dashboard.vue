@@ -8,7 +8,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                 </div>
-                <span class="text-xl font-bold tracking-tight">FlareBridge <span class="text-indigo-400 text-sm ml-1">v1.0</span></span>
+                <span class="text-xl font-bold tracking-tight">FlareBridge <span class="text-indigo-400 text-sm ml-1">v1.1</span></span>
             </div>
 
             <div class="flex items-center bg-slate-800/50 p-1 rounded-xl border border-white/5">
@@ -29,7 +29,7 @@
                     <span class="text-sm font-bold">{{ user.name }}</span>
                     <span class="text-xs text-slate-500">{{ user.email }}</span>
                 </div>
-                <button @click="logout" class="p-2 text-slate-400 hover:text-red-400 transition-colors">
+                <button @click="logout" class="p-2 text-slate-400 hover:text-red-400 transition-colors" title="Logout">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
@@ -57,9 +57,18 @@
                                         <div class="w-2 h-2 rounded-full flex-shrink-0" :class="selectedDomain?.id === domain.id ? 'bg-indigo-400' : 'bg-slate-600'"></div>
                                         <span class="font-medium truncate">{{ domain.domain }}</span>
                                     </div>
-                                    <svg v-if="selectedDomain?.id === domain.id" class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                    </svg>
+                                    <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button @click.stop="editDomain(domain)" class="p-1 text-slate-500 hover:text-indigo-400">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                            </svg>
+                                        </button>
+                                        <button @click.stop="deleteDomain(domain.id)" class="p-1 text-slate-500 hover:text-red-400">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <button @click="showAddDomain = true" class="w-full py-3 border border-dashed border-white/10 rounded-xl text-slate-500 hover:text-indigo-400 hover:border-indigo-500/40 transition-all text-sm font-medium">
@@ -111,8 +120,13 @@
                                                 <td class="px-6 py-4 text-slate-400 text-sm truncate max-w-xs">
                                                     https://{{ sub.subdomain }}.{{ selectedDomain.domain }}
                                                 </td>
-                                                <td class="px-6 py-4 text-right">
-                                                    <button @click="deleteSubdomain(sub.id)" class="p-2 text-slate-600 hover:text-red-400 transition-colors">
+                                                <td class="px-6 py-4 text-right flex items-center justify-end space-x-2">
+                                                    <button @click="editSubdomain(sub)" class="p-2 text-slate-600 hover:text-indigo-400 transition-colors">
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                        </svg>
+                                                    </button>
+                                                    <button @click="confirmDeleteSubdomain(sub.id)" class="p-2 text-slate-600 hover:text-red-400 transition-colors">
                                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                         </svg>
@@ -144,63 +158,103 @@
             FlareBridge &copy; 2026 - Powered by Laravel & Vue
         </footer>
 
-        <!-- Modal: Add Subdomain -->
-        <div v-if="showAddSubdomain" class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-sm">
+        <!-- Modal: Add/Edit Subdomain -->
+        <div v-if="showAddSubdomain || editingSub" class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-sm">
             <div class="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl p-8 shadow-2xl">
-                <h3 class="text-xl font-bold mb-6">Create New Subdomain</h3>
+                <h3 class="text-xl font-bold mb-6">{{ editingSub ? 'Edit Subdomain' : 'Create New Subdomain' }}</h3>
                 <div class="space-y-4 mb-8">
                     <div class="space-y-2">
-                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Subdomain Prefix</label>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
+                            Subdomain Prefix
+                            <div class="group relative ml-2">
+                                <span class="cursor-help text-slate-600 hover:text-indigo-400">?</span>
+                                <div class="absolute bottom-full left-0 mb-2 w-48 p-2 bg-slate-800 text-[10px] rounded shadowing-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                                    The name of your subdomain (e.g. 'blog' for blog.example.com)
+                                </div>
+                            </div>
+                        </label>
                         <div class="flex items-center">
-                            <input v-model="newSubdomain" type="text" placeholder="myapp"
+                            <input v-model="subForm.subdomain" type="text" placeholder="e.g. myapp"
                                 class="flex-grow bg-slate-800 border-y border-l border-white/10 rounded-l-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all">
-                            <span class="bg-slate-800 border border-white/10 rounded-r-xl px-4 py-3 text-slate-500 font-medium">.{{ selectedDomain?.domain }}</span>
+                            <span class="bg-slate-800 border border-white/10 rounded-r-xl px-4 py-3 text-slate-500 font-medium whitespace-nowrap">.{{ selectedDomain?.domain }}</span>
                         </div>
                     </div>
                 </div>
                 <div class="flex space-x-3">
-                    <button @click="showAddSubdomain = false" class="flex-grow py-3 text-slate-400 hover:text-white transition-colors">Cancel</button>
-                    <button @click="createSubdomain" :disabled="!newSubdomain || creating"
+                    <button @click="closeSubModal" class="flex-grow py-3 text-slate-400 hover:text-white transition-colors">Cancel</button>
+                    <button @click="saveSubdomain" :disabled="!subForm.subdomain || creating"
                         class="flex-grow py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl transition-all active:scale-95 disabled:opacity-50">
-                        {{ creating ? 'Creating...' : 'Create' }}
+                        {{ creating ? 'Saving...' : (editingSub ? 'Update' : 'Create') }}
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Modal: Add Domain -->
-        <div v-if="showAddDomain" class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-sm">
+        <!-- Modal: Add/Edit Domain -->
+        <div v-if="showAddDomain || editingDom" class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-sm">
             <div class="w-full max-w-lg bg-slate-900 border border-white/10 rounded-2xl p-8 shadow-2xl">
-                <h3 class="text-xl font-bold mb-6">Register New Domain</h3>
+                <h3 class="text-xl font-bold mb-6">{{ editingDom ? 'Edit Domain Configuration' : 'Register New Domain' }}</h3>
                 <div class="space-y-4 mb-8">
                     <div class="space-y-2">
-                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Domain Name</label>
-                        <input v-model="newDomain.domain" type="text" placeholder="example.id"
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
+                            Domain Name
+                            <div class="group relative ml-2">
+                                <span class="cursor-help text-slate-600 hover:text-indigo-400">?</span>
+                                <div class="absolute bottom-full left-0 mb-2 w-48 p-2 bg-slate-800 text-[10px] rounded shadowing-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                                    The root domain managed in Cloudflare (e.g. example.com)
+                                </div>
+                            </div>
+                        </label>
+                        <input v-model="domainForm.domain" type="text" placeholder="e.g. example.com"
                             class="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Zone ID</label>
-                            <input v-model="newDomain.zone_id" type="text" placeholder="Cloudflare Zone ID"
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
+                                Zone ID
+                                <div class="group relative ml-2">
+                                    <span class="cursor-help text-slate-600 hover:text-indigo-400">?</span>
+                                    <div class="absolute bottom-full left-0 mb-2 w-48 p-2 bg-slate-800 text-[10px] rounded shadowing-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                                        Cloudflare Zone ID found on Domain Overview page.
+                                    </div>
+                                </div>
+                            </label>
+                            <input v-model="domainForm.zone_id" type="text" placeholder="Cloudflare Zone ID"
                                 class="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all text-sm">
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Account ID</label>
-                            <input v-model="newDomain.account_id" type="text" placeholder="Cloudflare Account ID"
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
+                                Account ID
+                                <div class="group relative ml-2">
+                                    <span class="cursor-help text-slate-600 hover:text-indigo-400">?</span>
+                                    <div class="absolute bottom-full left-0 mb-2 w-48 p-2 bg-slate-800 text-[10px] rounded shadowing-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                                        Cloudflare Account ID found in your dashboard URL or sidebar.
+                                    </div>
+                                </div>
+                            </label>
+                            <input v-model="domainForm.account_id" type="text" placeholder="Cloudflare Account ID"
                                 class="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all text-sm">
                         </div>
                     </div>
                     <div class="space-y-2">
-                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Tunnel ID</label>
-                        <input v-model="newDomain.tunnel_id" type="text" placeholder="Cloudflare Tunnel ID"
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
+                            Tunnel ID
+                            <div class="group relative ml-2">
+                                <span class="cursor-help text-slate-600 hover:text-indigo-400">?</span>
+                                <div class="absolute bottom-full left-0 mb-2 w-48 p-2 bg-slate-800 text-[10px] rounded shadowing-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                                    The ID of your Cloudflare Zero Trust Tunnel.
+                                </div>
+                            </div>
+                        </label>
+                        <input v-model="domainForm.tunnel_id" type="text" placeholder="e.g. 1234abcd-..."
                             class="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all">
                     </div>
                 </div>
                 <div class="flex space-x-3">
-                    <button @click="showAddDomain = false" class="flex-grow py-3 text-slate-400 hover:text-white transition-colors">Cancel</button>
-                    <button @click="createDomain" :disabled="creatingDomain || !newDomain.domain"
+                    <button @click="closeDomainModal" class="flex-grow py-3 text-slate-400 hover:text-white transition-colors">Cancel</button>
+                    <button @click="saveDomain" :disabled="creatingDomain || !domainForm.domain"
                         class="flex-grow py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl transition-all active:scale-95 disabled:opacity-50">
-                        {{ creatingDomain ? 'Saving...' : 'Register' }}
+                        {{ creatingDomain ? 'Saving...' : (editingDom ? 'Update' : 'Register') }}
                     </button>
                 </div>
             </div>
@@ -209,22 +263,18 @@
         <!-- Modal: Reset System (Danger Zone) -->
         <div v-if="showResetModal" class="fixed inset-0 z-[70] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md">
             <div class="w-full max-w-md bg-slate-900 border border-red-500/30 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-                <!-- Background Warning Pulse -->
                 <div class="absolute -top-24 -right-24 w-48 h-48 bg-red-500/10 blur-[60px] rounded-full animate-pulse"></div>
-                
                 <div class="relative z-10 text-center">
                     <div class="w-16 h-16 bg-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-red-500">
                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
                     </div>
-                    
                     <h3 class="text-2xl font-black mb-2 text-white">Wipe Everything?</h3>
                     <p class="text-slate-400 mb-8 text-sm leading-relaxed">
                         This will permanently delete all <span class="text-white font-bold">domains, subdomains, users, and settings</span>. 
                         FlareBridge will return to the onboarding screen. This action cannot be undone.
                     </p>
-
                     <div class="space-y-3">
                         <button @click="performReset" :disabled="resetting"
                             class="w-full py-4 bg-red-500 hover:bg-red-600 text-white font-black rounded-2xl shadow-xl shadow-red-500/20 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center">
@@ -247,7 +297,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import Docs from './Docs.vue';
@@ -260,26 +310,31 @@ const selectedDomain = ref(null);
 const subdomains = ref([]);
 
 const showAddSubdomain = ref(false);
+const editingSub = ref(null);
 const showAddDomain = ref(false);
+const editingDom = ref(null);
 const showResetModal = ref(false);
-const newSubdomain = ref('');
+
 const creating = ref(false);
 const creatingDomain = ref(false);
 const resetting = ref(false);
 
-const newDomain = reactive({
+const domainForm = reactive({
+    id: null,
     domain: '',
     zone_id: '',
     account_id: '',
     tunnel_id: '',
 });
 
+const subForm = reactive({
+    id: null,
+    subdomain: '',
+});
+
 onMounted(async () => {
-    // Check Auth
     const token = localStorage.getItem('flare_token');
-    if (!token) {
-        return router.push('/onboarding');
-    }
+    if (!token) return router.push('/login');
 
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
@@ -287,25 +342,27 @@ onMounted(async () => {
         const { data: userData } = await axios.get('/api/user');
         user.value = userData;
 
-        // Fetch settings for mode
         const { data: settingsData } = await axios.get('/api/v1/settings?keys=app_mode');
         appMode.value = settingsData.data.app_mode || 'docs';
 
-        // Fetch domains
         await fetchDomains();
     } catch (error) {
         if (error.response?.status === 401) {
             localStorage.removeItem('flare_token');
-            router.push('/onboarding');
+            router.push('/login');
         }
     }
 });
 
 const fetchDomains = async () => {
-    const { data } = await axios.get('/api/v1/domains');
-    domains.value = data.data;
-    if (domains.value.length > 0 && !selectedDomain.value) {
-        selectDomain(domains.value[0]);
+    try {
+        const { data } = await axios.get('/api/v1/domains');
+        domains.value = data.data;
+        if (domains.value.length > 0 && !selectedDomain.value) {
+            selectDomain(domains.value[0]);
+        }
+    } catch (error) {
+        console.error('Failed to fetch domains');
     }
 };
 
@@ -316,57 +373,108 @@ const selectDomain = async (domain) => {
 
 const fetchSubdomains = async () => {
     if (!selectedDomain.value) return;
-    const { data } = await axios.get(`/api/v1/subdomains?domain_id=${selectedDomain.value.id}`);
-    subdomains.value = data.data;
+    try {
+        const { data } = await axios.get(`/api/v1/subdomains?domain_id=${selectedDomain.value.id}`);
+        subdomains.value = data.data;
+    } catch (error) {
+        console.error('Failed to fetch subdomains');
+    }
 };
 
-const createDomain = async () => {
-    if (!newDomain.domain) return;
+// Domain CRUD
+const saveDomain = async () => {
+    if (!domainForm.domain) return;
     creatingDomain.value = true;
     try {
-        await axios.post('/api/v1/domains', newDomain);
-        showAddDomain.value = false;
-        // Reset form
-        newDomain.domain = '';
-        newDomain.zone_id = '';
-        newDomain.account_id = '';
-        newDomain.tunnel_id = '';
+        if (editingDom.value) {
+            await axios.put(`/api/v1/domains/${domainForm.id}`, domainForm);
+        } else {
+            await axios.post('/api/v1/domains', domainForm);
+        }
+        closeDomainModal();
         await fetchDomains();
     } catch (error) {
-        alert('Failed to register domain');
+        alert(error.response?.data?.message || 'Failed to save domain. Make sure Zone ID and Account ID are valid.');
     } finally {
         creatingDomain.value = false;
     }
 };
 
-const createSubdomain = async () => {
-    if (!newSubdomain.value || !selectedDomain.value) return;
-    
+const editDomain = (domain) => {
+    editingDom.value = true;
+    domainForm.id = domain.id;
+    domainForm.domain = domain.domain;
+    domainForm.zone_id = domain.zone_id;
+    domainForm.account_id = domain.account_id;
+    domainForm.tunnel_id = domain.tunnel_id;
+    showAddDomain.value = true;
+};
+
+const deleteDomain = async (id) => {
+    if (!confirm('Are you sure you want to delete this domain? Active subdomains must be removed first.')) return;
+    try {
+        await axios.delete(`/api/v1/domains/${id}`);
+        if (selectedDomain.value?.id === id) selectedDomain.value = null;
+        await fetchDomains();
+    } catch (error) {
+        alert(error.response?.data?.message || 'Failed to delete domain');
+    }
+};
+
+const closeDomainModal = () => {
+    showAddDomain.value = false;
+    editingDom.value = null;
+    domainForm.id = null;
+    domainForm.domain = '';
+    domainForm.zone_id = '';
+    domainForm.account_id = '';
+    domainForm.tunnel_id = '';
+};
+
+// Subdomain CRUD
+const saveSubdomain = async () => {
+    if (!subForm.subdomain || !selectedDomain.value) return;
     creating.value = true;
     try {
-        await axios.post('/api/v1/subdomains', {
-            domain_id: selectedDomain.value.id,
-            subdomain: newSubdomain.value
-        });
-        newSubdomain.value = '';
-        showAddSubdomain.value = false;
+        if (editingSub.value) {
+            await axios.put(`/api/v1/subdomains/${subForm.id}`, { subdomain: subForm.subdomain });
+        } else {
+            await axios.post('/api/v1/subdomains', {
+                domain_id: selectedDomain.value.id,
+                subdomain: subForm.subdomain
+            });
+        }
+        closeSubModal();
         await fetchSubdomains();
     } catch (error) {
-        alert(error.response?.data?.message || 'Failed to create subdomain');
+        alert(error.response?.data?.message || 'Failed to save subdomain');
     } finally {
         creating.value = false;
     }
 };
 
-const deleteSubdomain = async (id) => {
+const editSubdomain = (sub) => {
+    editingSub.value = true;
+    subForm.id = sub.id;
+    subForm.subdomain = sub.subdomain;
+    showAddSubdomain.value = true;
+};
+
+const confirmDeleteSubdomain = async (id) => {
     if (!confirm('Are you sure you want to delete this subdomain and sync with Cloudflare?')) return;
-    
     try {
         await axios.delete(`/api/v1/subdomains/${id}`);
         await fetchSubdomains();
     } catch (error) {
         alert('Failed to delete subdomain');
     }
+};
+
+const closeSubModal = () => {
+    showAddSubdomain.value = false;
+    editingSub.value = null;
+    subForm.id = null;
+    subForm.subdomain = '';
 };
 
 const setMode = async (mode) => {
@@ -380,9 +488,13 @@ const setMode = async (mode) => {
     }
 };
 
-const logout = () => {
-    localStorage.removeItem('flare_token');
-    router.push('/onboarding');
+const logout = async () => {
+    try {
+        await axios.post('/api/logout');
+    } finally {
+        localStorage.removeItem('flare_token');
+        router.push('/login');
+    }
 };
 
 const performReset = async () => {
@@ -390,7 +502,7 @@ const performReset = async () => {
     try {
         await axios.post('/api/v1/system/reset');
         localStorage.removeItem('flare_token');
-        window.location.href = '/onboarding'; // Force full reload to reset state
+        window.location.href = '/onboarding';
     } catch (error) {
         alert('Failed to reset system: ' + (error.response?.data?.message || error.message));
         resetting.value = false;

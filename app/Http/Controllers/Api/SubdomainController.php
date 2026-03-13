@@ -121,6 +121,88 @@ class SubdomainController extends Controller
     }
 
     /**
+     * Update subdomain mapping.
+     */
+    public function update(Request $request, $id)
+    {
+        $service = Service::with('domain')->find($id);
+
+        if (!$service) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Service not found'
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'subdomain' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) use ($request, $service) {
+                    $exists = Service::where('domain_id', $service->domain_id)
+                        ->where('subdomain', $value)
+                        ->where('id', '!=', $service->id)
+                        ->exists();
+                    if ($exists) {
+                        $fail('The subdomain has already been taken for this domain.');
+                    }
+                },
+            ],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $oldSubdomain = $service->subdomain;
+            $domain = $service->domain;
+
+            // Update DB
+            $service->update([
+                'subdomain' => $request->subdomain,
+                'full_domain' => $request->subdomain . '.' . $domain->domain,
+            ]);
+
+            // === Cloudflare Sync ===
+            // 1. Delete Old DNS
+            $this->cloudflare->deleteDnsRecord($oldSubdomain, $domain->domain, $domain->zone_id);
+
+            // 2. Upsert New DNS
+            $this->cloudflare->upsertDnsRecord(
+                $service->subdomain, 
+                $domain->domain, 
+                $domain->zone_id, 
+                $domain->tunnel_id
+            );
+            
+            // 3. Update Tunnel Ingress
+            $this->cloudflare->updateTunnelIngress(
+                Service::where('domain_id', $domain->id)->get(), 
+                $domain->account_id, 
+                $domain->tunnel_id
+            );
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Subdomain updated and synced with Cloudflare successfully',
+                'data' => $service
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Update Subdomain Error: " . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to update subdomain or sync with Cloudflare',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Delete subdomain mapping.
      */
     public function destroy($id)

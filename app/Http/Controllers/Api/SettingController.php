@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 
 class SettingController extends Controller
 {
+    protected $cloudflare;
+
+    public function __construct(\App\Services\CloudflareService $cloudflare)
+    {
+        $this->cloudflare = $cloudflare;
+    }
+
     public function index(Request $request)
     {
         $keys = $request->query('keys');
@@ -57,6 +64,21 @@ class SettingController extends Controller
 
         if ($validator->fails()) {
             return response()->json(['status' => 'error', 'errors' => $validator->errors()], 422);
+        }
+
+        // 1.5 Validate Cloudflare Credentials
+        try {
+            $this->cloudflare->verifyCredentials(
+                $request->cloudflare_email,
+                $request->cloudflare_api_token,
+                $request->domain['zone_id'],
+                $request->domain['account_id']
+            );
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Cloudflare validation failed: ' . $e->getMessage()
+            ], 422);
         }
 
         // 2. Save Settings
@@ -118,6 +140,37 @@ class SettingController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'System has been reset successfully. Redirecting to onboarding.'
+        ]);
+    }
+
+    /**
+     * Get current user's token (for documentation view).
+     */
+    public function viewToken(Request $request)
+    {
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'token' => $request->user()->currentAccessToken()->token ?? 'Check your headers'
+            ]
+        ]);
+    }
+
+    /**
+     * Renew API token.
+     */
+    public function renewToken(Request $request)
+    {
+        $user = $request->user();
+        $user->tokens()->delete();
+        $token = $user->createToken('flare-access-token')->plainTextToken;
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Token renewed successfully',
+            'data' => [
+                'token' => $token
+            ]
         ]);
     }
 }

@@ -9,122 +9,52 @@ FlareBridge is a professional REST API and Modern Dashboard built with Laravel 1
 ## 🔒 API Security
 
 FlareBridge is protected by **Laravel Sanctum**. To use the API, you must provide a Bearer Token in the HTTP headers.
-
-### 1. Generating a Token
-Run the following artisan command to generate a token for your admin user:
-```bash
-php artisan flare:generate-token admin@example.com
-```
-
-### 2. Using the Token
-Add the following header to all API requests:
-`Authorization: Bearer YOUR_GENERATED_TOKEN`
+1. **Login**: Authenticate via `/api/login` to get your session token.
+2. **Usage**: Add header `Authorization: Bearer YOUR_TOKEN`.
+3. **Rotation**: You can renew your token anytime in the **Documentation** tab.
 
 ## 🚀 Key Features
 
 -   **Multi-Domain Architecture**: Manage multiple root domains, Cloudflare Zones, and Tunnels from a single instance.
 -   **Automated DNS Sync**: Automatically creates/updates CNAME records for subdomains.
 -   **Tunnel Ingress Automation**: Updates Cloudflare Tunnel ingress rules instantly upon subdomain changes.
+-   **Credential Validation**: Automatically verifies Cloudflare tokens, zone IDs, and account IDs before saving.
 -   **Professional Versioning**: Clean API structure using `/api/v1/`.
--   **Secure Authentication**: Token-based security powered by Laravel Sanctum.
-- **Service Registry**: Keeps track of `subdomain -> port` mappings in a MySQL database.
-- **RESTful API**: Professional JSON responses for listing, creating, and deleting mappings.
-- **Validation**: Ensures no duplicate subdomains per domain and no port conflicts globaly.
+-   **Full CRUD**: Complete management for both Domains and Subdomain mappings.
+-   **Secure Authentication**: Secure login/logout system powered by Laravel Sanctum.
 
 ## 🛠️ Tech Stack
 
 - **Backend**: Laravel 10 (PHP 8.1+)
 - **Frontend**: Vue 3 + Vite (SPA)
-- **Security**: Laravel Sanctum (Token-Based Auth)
-- **Database**: MySQL / MariaDB
+- **Security**: Laravel Sanctum (Auth)
 - **Integration**: Cloudflare API Integration
 
 ## 🔑 Smart Onboarding & Integration
 
-FlareBridge features a **Modern Onboarding Flow**. You no longer need to manually edit `.env` for Cloudflare credentials.
+FlareBridge features a **Modern Onboarding Flow**. 
 
 1.  **Run the App**: Start `php artisan serve` and `npm run dev`.
-2.  **Setup Wizard**: Open your browser. The app will detect if it's the first run and guide you through entering:
-    -   Cloudflare Email & API Token.
-    -   Admin Account Registration.
-    -   Initial Domain Configuration.
-3.  **Automatic Sync**: Once setup is complete, FlareBridge will handle all DNS and Tunnel Ingress updates automatically.
+2.  **Setup Wizard**: Open your browser. The app will detect if it's the first run and guide you through entering credentials.
+3.  **Automatic Validation**: FlareBridge verifies your Cloudflare credentials in real-time during setup.
+4.  **Automatic Sync**: Once setup is complete, everything is handled automatically.
 
 ## 📋 API Reference (v1)
 
-| Endpoint | Method | Description | Auth |
+| Method | Endpoint | Description | Auth |
 | :--- | :--- | :--- | :--- |
-| `/api/onboarding-check` | `GET` | Check if setup is completed | No |
-| `POST` | `/api/setup` | Run initial setup & admin registration | No |
-| `/api/v1/domains` | `GET` | List all managed domains | Yes |
-| `/api/v1/domains` | `POST` | Register a new domain config | Yes |
-| `/api/v1/subdomains` | `GET` | Retrieve all registered subdomains | Yes |
-| `/api/v1/subdomains` | `POST` | Create a new subdomain (Auto-sync) | Yes |
-| `/api/v1/subdomains/{id}` | `DELETE` | Remove a subdomain mapping | Yes |
-| `/api/v1/settings` | `GET/POST` | Manage app settings & UI mode | Yes |
-| `/api/v1/system/reset` | `POST` | Wipe all data & return to onboarding | Yes |
-
-### Example Request (Domain Management)
-`POST /api/v1/domains`
-```json
-{
-    "domain": "another-domain.id",
-    "zone_id": "YOUR_CLOUDFLARE_ZONE_ID",
-    "account_id": "YOUR_CLOUDFLARE_ACCOUNT_ID",
-    "tunnel_id": "YOUR_CLOUDFLARE_TUNNEL_ID"
-}
-```
-
-### Example Request (Subdomain Management)
-`POST /api/v1/subdomains`
-```json
-{
-    "domain_id": 2,
-    "subdomain": "my-cool-app"
-}
-```
-
-### Example Response (Standardized)
-```json
-{
-    "status": "success",
-    "message": "Subdomain created and synced with Cloudflare successfully",
-    "data": {
-        "url": "my-cool-app.mazkama.web.id",
-        "port": 5432
-    }
-}
-```
-
-## ⚙️ Installation
-
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   composer install
-   ```
-
-3. **Environment Setup**:
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
-   *Edit `.env` to configure your MySQL database credentials.*
-
-4. **Run Migrations**:
-   ```bash
-   php artisan migrate
-   ```
-
-5. **Start Development Server**:
-   ```bash
-   php artisan serve
-   ```
-
-## 📄 License
-
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+| **POST** | `/api/login` | Authenticate and get token | No |
+| **POST** | `/api/logout` | Revoke current access token | Yes |
+| **GET** | `/api/v1/domains` | List all root domains | Yes |
+| **POST** | `/api/v1/domains` | Register new domain (w/ Validation) | Yes |
+| **PUT** | `/api/v1/domains/{id}` | Update domain settings | Yes |
+| **DELETE** | `/api/v1/domains/{id}` | Delete domain (Must be empty) | Yes |
+| **GET** | `/api/v1/subdomains` | List all subdomain mappings | Yes |
+| **POST** | `/api/v1/subdomains` | Create new mapping (Generates port) | Yes |
+| **PUT** | `/api/v1/subdomains/{id}` | Update mapping (Syncs with Cloudflare) | Yes |
+| **DELETE** | `/api/v1/subdomains/{id}` | Remove mapping and DNS record | Yes |
+| **POST** | `/api/v1/system/reset` | Wipe all data & return to onboarding | Yes |
+| **POST** | `/api/v1/system/token/renew` | Rotate your API Access Token | Yes |
 
 ---
 Built with ❤️ for Cloudflare power users.
