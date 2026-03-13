@@ -38,7 +38,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::apiResource('domains', DomainController::class);
 
     // Subdomain Management
-    Route::apiResource('subdomains', SubdomainController::class)->only(['index', 'store', 'destroy']);
+    Route::apiResource('subdomains', SubdomainController::class)->only(['index', 'store', 'update', 'destroy']);
 
     // System Operations
     Route::post('/system/reset', [SettingController::class, 'resetSystem']);
