@@ -59,6 +59,7 @@ class SettingController extends Controller
             'cloudflare_api_token' => 'required|string',
             'admin_email' => 'required|email',
             'admin_name' => 'required|string',
+            'admin_password' => 'required|string|min:6',
             'domain' => 'required|array'
         ]);
 
@@ -91,7 +92,7 @@ class SettingController extends Controller
             ['email' => $request->admin_email],
             [
                 'name' => $request->admin_name,
-                'password' => \Illuminate\Support\Facades\Hash::make(\Illuminate\Support\Str::random(32))
+                'password' => \Illuminate\Support\Facades\Hash::make($request->admin_password)
             ]
         );
 
