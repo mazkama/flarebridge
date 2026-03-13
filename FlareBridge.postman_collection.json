@@ -107,7 +107,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"cloudflare_email\": \"admin@example.com\",\n    \"cloudflare_api_token\": \"YOUR_CF_TOKEN\",\n    \"admin_email\": \"admin@mazkama.web.id\",\n    \"admin_name\": \"Admin FlareBridge\",\n    \"domain\": {\n        \"domain\": \"mazkama.web.id\",\n        \"zone_id\": \"CF_ZONE_ID\",\n        \"account_id\": \"CF_ACCOUNT_ID\",\n        \"tunnel_id\": \"CF_TUNNEL_ID\"\n    }\n}"
+							"raw": "{\n    \"cloudflare_email\": \"admin@example.com\",\n    \"cloudflare_api_token\": \"YOUR_CF_TOKEN\",\n    \"admin_email\": \"admin@mazkama.web.id\",\n    \"admin_name\": \"Admin FlareBridge\",\n    \"admin_password\": \"YOUR_NEW_PASSWORD\",\n    \"domain\": {\n        \"domain\": \"mazkama.web.id\",\n        \"zone_id\": \"CF_ZONE_ID\",\n        \"account_id\": \"CF_ACCOUNT_ID\",\n        \"tunnel_id\": \"CF_TUNNEL_ID\"\n    }\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/setup",

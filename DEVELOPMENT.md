@@ -51,9 +51,9 @@ API ini dirancang untuk berintegrasi dengan **Cloudflare Zero Trust Tunnel**.
 1. [DONE] **Dashboard UI**: Modern glassmorphism dashboard built with Vue 3.
 2. [DONE] **Cloudflare API Integration**: Automated DNS and Tunnel Ingress sync.
 3. **Health Check**: Endpoint for monitoring whether local services are reachable.
-4. [DONE] **Auth / API Key**: Secure Login/Logout and Token Management using Sanctum.
+4. [DONE] **Auth / Token Management**: Secure Login/Logout using Laravel Sanctum with custom Toast/Modal feedback.
 5. **Log Monitoring**: Visualizing Cloudflare logs directly in the dashboard.
-6. [DONE] **Multi-language Support**: Seamless switching between English (EN) and Indonesian (ID).
+6. [DONE] **Multi-language Support (EN/ID)**: High-end localization system using custom `useI18n` composable.
 
 ---
 

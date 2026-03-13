@@ -15,15 +15,15 @@ FlareBridge is protected by **Laravel Sanctum**. To use the API, you must provid
 
 ## 🚀 Key Features
 
--   **Multi-language Support**: Seamless switching between English and Indonesian with persistent settings.
+-   **Premium UI/UX**: High-end glassmorphism dashboard with custom **Toast Notifications** and **Confirmation Modals** (no native alerts).
+-   **Multi-language Support (EN/ID)**: Seamless switching between English and Indonesian with persistent settings.
 -   **Custom Port Control**: Option to manually assign ports or let FlareBridge auto-generate them.
--   **Fully Responsive UI**: Modern dashboard optimized for mobile, tablet, and desktop view.
+-   **Fully Responsive**: Optimized for mobile, tablet, and desktop view.
 -   **Automated DNS Sync**: Automatically creates/updates CNAME records for subdomains.
--   **Tunnel Ingress Automation**: Updates Cloudflare Tunnel ingress rules instantly upon subdomain changes.
--   **Credential Validation**: Automatically verifies Cloudflare tokens, zone IDs, and account IDs before saving.
--   **Professional Versioning**: Clean API structure using `/api/v1/`.
--   **Full CRUD**: Complete management for both Domains and Subdomain mappings.
--   **Secure Authentication**: Secure login/logout system powered by Laravel Sanctum.
+-   **Tunnel Ingress Automation**: Updates Cloudflare Tunnel ingress rules instantly.
+-   **Credential Validation**: Real-time verification of Cloudflare tokens during setup.
+-   **Secure Authentication**: Session protection via Laravel Sanctum.
+-   **Clean API Structure**: Standardized `/api/v1/` versioning for all endpoints.
 
 ## 🛠️ Tech Stack
 
