@@ -125,6 +125,61 @@
                 {{ t('docs.pro_tip_desc') }}
             </p>
         </section>
+
+        <!-- Custom Confirmation Modal -->
+        <transition name="modal">
+            <div v-if="confirmModal.show" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-sm">
+                <div class="bg-slate-900 border border-white/10 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-zoom-in">
+                    <div class="p-8">
+                        <div class="w-16 h-16 bg-yellow-500/10 rounded-2xl flex items-center justify-center mb-6 text-yellow-500">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">{{ confirmModal.title }}</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-8">{{ confirmModal.message }}</p>
+                        
+                        <div class="flex space-x-3">
+                            <button @click="confirmModal.show = false" 
+                                class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl transition-all">
+                                {{ t('common.cancel') }}
+                            </button>
+                            <button @click="confirmModal.action" 
+                                class="flex-1 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition-all active:scale-95">
+                                {{ t('common.update') }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+        <!-- Toast System (Local for Docs) -->
+        <transition-group name="toast" tag="div" class="fixed bottom-8 right-8 z-[110] space-y-3">
+            <div v-for="toast in toasts" :key="toast.id" 
+                class="flex items-center p-4 min-w-[320px] max-w-md rounded-2xl shadow-2xl border backdrop-blur-md transition-all duration-500"
+                :class="{
+                    'bg-slate-900/95 border-red-500/40 text-red-100 shadow-red-500/10': toast.type === 'error',
+                    'bg-slate-900/95 border-green-500/40 text-green-100 shadow-green-500/10': toast.type === 'success',
+                }">
+                <div class="flex-shrink-0 mr-3">
+                    <div v-if="toast.type === 'error'" class="w-8 h-8 bg-red-500/10 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <div v-else class="w-8 h-8 bg-green-500/10 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex-grow">
+                    <div class="text-xs font-black uppercase tracking-widest mb-0.5 opacity-50">{{ toast.title }}</div>
+                    <div class="text-sm font-medium leading-normal">{{ toast.message }}</div>
+                </div>
+            </div>
+        </transition-group>
     </div>
 </template>
 
@@ -139,6 +194,32 @@ const currentToken = ref('');
 const renewing = ref(false);
 const copied = ref(false);
 const showToken = ref(false);
+const toasts = ref([]);
+
+const confirmModal = reactive({
+    show: false,
+    title: '',
+    message: '',
+    action: () => {}
+});
+
+const showToast = (title, message, type = 'success') => {
+    const id = Date.now();
+    toasts.value.push({ id, title, message, type });
+    setTimeout(() => {
+        toasts.value = toasts.value.filter(t => t.id !== id);
+    }, 4000);
+};
+
+const triggerConfirm = (title, message, action) => {
+    confirmModal.title = title;
+    confirmModal.message = message;
+    confirmModal.action = () => {
+        action();
+        confirmModal.show = false;
+    };
+    confirmModal.show = true;
+};
 
 const fetchToken = async () => {
     try {
@@ -148,21 +229,26 @@ const fetchToken = async () => {
     }
 };
 
-const renewToken = async () => {
-    if (!confirm(t('docs.renew_confirm'))) return;
-    renewing.value = true;
-    try {
-        const { data } = await axios.post('/api/v1/system/token/renew');
-        const token = data.data.token;
-        localStorage.setItem('flare_token', token);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        currentToken.value = token;
-        alert(t('docs.renew_success'));
-    } catch (e) {
-        alert(t('docs.renew_error'));
-    } finally {
-        renewing.value = false;
-    }
+const renewToken = () => {
+    triggerConfirm(
+        t('docs.renew_token'),
+        t('docs.renew_confirm'),
+        async () => {
+            renewing.value = true;
+            try {
+                const { data } = await axios.post('/api/v1/system/token/renew');
+                const token = data.data.token;
+                localStorage.setItem('flare_token', token);
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                currentToken.value = token;
+                showToast(t('common.success'), t('docs.renew_success'));
+            } catch (e) {
+                showToast(t('common.error'), t('docs.renew_error'), 'error');
+            } finally {
+                renewing.value = false;
+            }
+        }
+    );
 };
 
 const copyToken = () => {

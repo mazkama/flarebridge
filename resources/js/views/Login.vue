@@ -52,7 +52,7 @@
                             </div>
                         </label>
                         <input v-model="form.password" type="password" required :placeholder="t('login.password_placeholder')"
-                            class="w-full bg-slate-900 border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-medium">
+                            class="w-full bg-slate-900 border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-medium font-sans">
                     </div>
 
                     <div v-if="error" class="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl text-xs font-medium animate-shake">

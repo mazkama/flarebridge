@@ -190,7 +190,7 @@
                                     <span class="text-white font-black">{{ form.admin_name }}</span>
                                 </div>
                                 <div class="flex items-center justify-between text-sm">
-                                    <span class="text-slate-500 italic">{{ t('onboarding.username_label') }}</span>
+                                    <span class="text-slate-500 italic uppercase text-[10px] tracking-widest font-bold">{{ t('onboarding.admin_email') }}</span>
                                     <span class="text-indigo-400 font-black font-mono">{{ form.admin_email }}</span>
                                 </div>
                             </div>
