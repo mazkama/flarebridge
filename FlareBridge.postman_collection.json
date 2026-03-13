@@ -135,6 +135,11 @@
 							{
 								"key": "Accept",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{apiToken}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -159,6 +164,11 @@
 							{
 								"key": "Accept",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{apiToken}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -187,6 +197,11 @@
 							{
 								"key": "Accept",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{apiToken}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -212,6 +227,17 @@
 					"name": "Delete Domain",
 					"request": {
 						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{apiToken}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/domains/1",
 							"host": [
@@ -236,6 +262,17 @@
 					"name": "List Subdomains",
 					"request": {
 						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{apiToken}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/subdomains?domain_id=1",
 							"host": [
@@ -268,6 +305,11 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{apiToken}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -300,6 +342,11 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{apiToken}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -324,6 +371,17 @@
 					"name": "Update Subdomain",
 					"request": {
 						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{apiToken}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"subdomain\": \"newname\",\n    \"port\": 9000\n}"
@@ -347,6 +405,17 @@
 					"name": "Delete Subdomain",
 					"request": {
 						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{apiToken}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/subdomains/1",
 							"host": [
@@ -371,6 +440,17 @@
 					"name": "Reset System",
 					"request": {
 						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{apiToken}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/system/reset",
 							"host": [
@@ -390,6 +470,17 @@
 					"name": "View Token",
 					"request": {
 						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{apiToken}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/system/token",
 							"host": [
@@ -409,6 +500,17 @@
 					"name": "Renew Token",
 					"request": {
 						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{apiToken}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/system/token/renew",
 							"host": [
