@@ -531,6 +531,7 @@ const saveDomain = async () => {
         }
         closeDomainModal();
         await fetchDomains();
+        showToast(t('common.success'), t('dashboard.save_domain_success'), 'success');
     } catch (error) {
         showToast(t('common.error'), error.response?.data?.message || t('dashboard.save_domain_error'));
     } finally {
@@ -595,6 +596,7 @@ const saveSubdomain = async () => {
         }
         closeSubModal();
         await fetchSubdomains();
+        showToast(t('common.success'), t('dashboard.save_subdomain_success'), 'success');
     } catch (error) {
         showToast(t('common.error'), error.response?.data?.message || t('dashboard.save_subdomain_error'));
     } finally {
