@@ -24,6 +24,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::apiResource('domains', DomainController::class);
 
 // Subdomain Management
-Route::get('/subdomains', [SubdomainController::class, 'index']);
-Route::post('/subdomains', [SubdomainController::class, 'store']);
-Route::delete('/subdomains/{id}', [SubdomainController::class, 'destroy']);
+Route::apiResource('subdomains', SubdomainController::class)->only(['index', 'store', 'destroy']);
