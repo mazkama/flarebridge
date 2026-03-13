@@ -48,13 +48,11 @@ API ini dirancang untuk berintegrasi dengan **Cloudflare Zero Trust Tunnel**.
 
 ---
 
-## 🛠️ Rencana Pengembangan (Roadmap)
-
-1. **Dashboard UI**: Framework frontend (Vue/React) untuk visualisasi mapping subdomain & port tanpa lewat API manual.
-2. [DONE] **Cloudflare API Integration**: Otomatis update DNS/Tunnel rules.
-3. **Health Check**: Endpoint untuk monitoring apakah service di port tersebut masih hidup atau mati.
-4. **Auth / API Key**: Tambahkan proteksi (Sanctum/Passport) supaya API tidak bisa diakses sembarang orang.
-5. **Log Monitoring**: Integrasi log Cloudflare ke dashboard lokal.
+1. [DONE] **Dashboard UI**: Modern glassmorphism dashboard built with Vue 3.
+2. [DONE] **Cloudflare API Integration**: Automated DNS and Tunnel Ingress sync.
+3. **Health Check**: Endpoint for monitoring whether local services are reachable.
+4. [DONE] **Auth / API Key**: Secure Login/Logout and Token Management using Sanctum.
+5. **Log Monitoring**: Visualizing Cloudflare logs directly in the dashboard.
 
 ---
 
@@ -62,13 +60,18 @@ API ini dirancang untuk berintegrasi dengan **Cloudflare Zero Trust Tunnel**.
 
 | Method | Endpoint | Description |
 | --- | --- | --- |
-| `GET` | `/api/v1/domains` | List semua domain & config Cloudflare |
-| `POST` | `/api/v1/domains` | Tambah domain baru + config Cloudflare |
-| `PUT` | `/api/v1/domains/{id}` | Update config Cloudflare domain |
-| `DELETE` | `/api/v1/domains/{id}` | Hapus domain |
-| `GET` | `/api/v1/subdomains` | List semua mapping subdomain |
-| `POST` | `/api/v1/subdomains` | Create mapping baru (Auto Sync CF) |
-| `DELETE` | `/api/v1/subdomains/{id}` | Hapus mapping (Auto Sync CF) |
+| `POST` | `/api/login` | Authenticate and get token |
+| `POST` | `/api/logout` | Revoke current token |
+| `GET` | `/api/v1/domains` | List all root domains |
+| `POST` | `/api/v1/domains` | Register new domain (w/ validation) |
+| `PUT` | `/api/v1/domains/{id}` | Update domain settings |
+| `DELETE` | `/api/v1/domains/{id}` | Delete domain (must be empty) |
+| `GET` | `/api/v1/subdomains` | List all mappings |
+| `POST` | `/api/v1/subdomains` | Create mapping (generates port) |
+| `PUT` | `/api/v1/subdomains/{id}` | Update mapping (Cloudflare Sync) |
+| `DELETE` | `/api/v1/subdomains/{id}` | Remove mapping and DNS record |
+| `POST` | `/api/v1/system/reset` | Wipe all data & restart onboarding |
+| `POST` | `/api/v1/system/token/renew`| Rotate current Access Token |
 
 **Contoh Payload POST:**
 ```json
