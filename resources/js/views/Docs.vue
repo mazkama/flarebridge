@@ -1,8 +1,8 @@
 <template>
     <div class="space-y-12">
         <header>
-            <h1 class="text-4xl font-extrabold tracking-tight mb-4">API Documentation</h1>
-            <p class="text-xl text-slate-400">Simplified Subdomain & Cloudflare Tunnel Management.</p>
+            <h1 class="text-4xl font-extrabold tracking-tight mb-4">{{ t('docs.title') }}</h1>
+            <p class="text-xl text-slate-400">{{ t('docs.subtitle') }}</p>
         </header>
 
         <!-- Token Management Section -->
@@ -17,31 +17,31 @@
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
                         <h2 class="text-2xl font-black mb-2 flex items-center">
-                            Access Token Management
+                            {{ t('docs.token_mgmt_title') }}
                             <div class="group relative ml-2">
                                 <span class="cursor-help text-slate-600 hover:text-indigo-400 text-sm">?</span>
                                 <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed">
-                                    Use this token in your API clients (Postman, cURL, etc.) as a Bearer Token. Renewing will invalidate your current token.
+                                    {{ t('docs.token_mgmt_hint') }}
                                 </div>
                             </div>
                         </h2>
-                        <p class="text-slate-400 text-sm">Your personal access key for automating tunnel operations.</p>
+                        <p class="text-slate-400 text-sm">{{ t('docs.token_mgmt_desc') }}</p>
                     </div>
                     <button @click="renewToken" :disabled="renewing"
                         class="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/20 transition-all active:scale-95 disabled:opacity-50">
-                        {{ renewing ? 'Renewing...' : 'Renew Token' }}
+                        {{ renewing ? t('docs.renewing') : t('docs.renew_token') }}
                     </button>
                 </div>
 
                 <div class="mt-8 bg-slate-950 p-6 rounded-2xl border border-white/5 group relative">
                     <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Current Access Token</span>
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">{{ t('docs.current_token') }}</span>
                         <button @click="copyToken" class="text-xs text-indigo-400 hover:text-indigo-300 font-bold transition-colors">
-                            {{ copied ? 'COPIED!' : 'COPY TOKEN' }}
+                            {{ copied ? t('docs.copied') : t('docs.copy_token') }}
                         </button>
                     </div>
                     <div class="font-mono text-indigo-300 break-all text-sm selection:bg-indigo-500/30">
-                        {{ currentToken || 'Loading token...' }}
+                        {{ currentToken || t('docs.loading_token') }}
                     </div>
                 </div>
             </div>
@@ -49,18 +49,18 @@
 
         <!-- Get Started Section -->
         <section class="space-y-6">
-            <h2 class="text-2xl font-bold border-b border-white/5 pb-2">Quick Start Guide</h2>
+            <h2 class="text-2xl font-bold border-b border-white/5 pb-2">{{ t('docs.quick_start') }}</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-slate-800/40 p-6 rounded-2xl border border-white/5">
-                    <h3 class="font-bold text-indigo-400 mb-2">1. Authentication</h3>
-                    <p class="text-sm text-slate-400 mb-4 font-medium">Add the token above as a Bearer Token in your HTTP headers.</p>
+                    <h3 class="font-bold text-indigo-400 mb-2">{{ t('docs.auth_title') }}</h3>
+                    <p class="text-sm text-slate-400 mb-4 font-medium">{{ t('docs.auth_desc') }}</p>
                     <code class="block bg-slate-950 p-3 rounded-lg text-xs text-indigo-300 border border-white/5">
                         Authorization: Bearer {{ currentToken?.substring(0, 10) }}...
                     </code>
                 </div>
                 <div class="bg-slate-800/40 p-6 rounded-2xl border border-white/5">
-                    <h3 class="font-bold text-indigo-400 mb-2">2. API Base URL</h3>
-                    <p class="text-sm text-slate-400 mb-4 font-medium">Prefix all requests with the API path.</p>
+                    <h3 class="font-bold text-indigo-400 mb-2">{{ t('docs.base_url_title') }}</h3>
+                    <p class="text-sm text-slate-400 mb-4 font-medium">{{ t('docs.base_url_desc') }}</p>
                     <code class="block bg-slate-950 p-3 rounded-lg text-xs text-indigo-300 border border-white/5 font-mono">
                         {{ apiUrl }}/api/v1/...
                     </code>
@@ -70,38 +70,38 @@
 
         <!-- Endpoints Section -->
         <section class="space-y-8">
-            <h2 class="text-2xl font-bold border-b border-white/5 pb-2">API Reference</h2>
+            <h2 class="text-2xl font-bold border-b border-white/5 pb-2">{{ t('docs.api_ref') }}</h2>
             
             <div class="space-y-10">
                 <!-- Domains -->
                 <div>
-                    <h3 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-[0.2em]">Domain Management</h3>
+                    <h3 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-[0.2em]">{{ t('docs.domain_mgmt') }}</h3>
                     <div class="grid grid-cols-1 gap-4">
-                        <EndpointRow method="GET" path="/domains" desc="List all managed root domains." />
-                        <EndpointRow method="POST" path="/domains" desc="Register a new Cloudflare Domain (Zone)." json='{ "domain": "example.com", "zone_id": "...", "account_id": "...", "tunnel_id": "..." }' />
-                        <EndpointRow method="PUT" path="/domains/{id}" desc="Update domain configuration." json='{ "domain": "new.com", "zone_id": "..." }' />
-                        <EndpointRow method="DELETE" path="/domains/{id}" desc="Remove domain and its settings." />
+                        <EndpointRow method="GET" path="/domains" :desc="t('docs.list_domains')" />
+                        <EndpointRow method="POST" path="/domains" :desc="t('docs.register_domain_desc')" json='{ "domain": "example.com", "zone_id": "...", "account_id": "...", "tunnel_id": "..." }' />
+                        <EndpointRow method="PUT" path="/domains/{id}" :desc="t('docs.update_domain_desc')" json='{ "domain": "new.com", "zone_id": "..." }' />
+                        <EndpointRow method="DELETE" path="/domains/{id}" :desc="t('docs.delete_domain_desc')" />
                     </div>
                 </div>
 
                 <!-- Subdomains -->
                 <div>
-                    <h3 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-[0.2em]">Subdomain Mappings</h3>
+                    <h3 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-[0.2em]">{{ t('docs.subdomain_mgmt') }}</h3>
                     <div class="grid grid-cols-1 gap-4">
-                        <EndpointRow method="GET" path="/subdomains" desc="Retrieve all active subdomain mappings." />
-                        <EndpointRow method="POST" path="/subdomains" desc="Create a new mapping (Tunnel Ingress) and DNS record." json='{ "domain_id": 1, "subdomain": "shop", "port": 8080 }' />
-                        <EndpointRow method="PUT" path="/subdomains/{id}" desc="Update mapping subdomain or port." json='{ "subdomain": "store", "port": 9000 }' />
-                        <EndpointRow method="DELETE" path="/subdomains/{id}" desc="Remove mapping and sync with Cloudflare." />
+                        <EndpointRow method="GET" path="/subdomains" :desc="t('docs.list_subdomains')" />
+                        <EndpointRow method="POST" path="/subdomains" :desc="t('docs.create_mapping_desc')" json='{ "domain_id": 1, "subdomain": "shop", "port": 8080 }' />
+                        <EndpointRow method="PUT" path="/subdomains/{id}" :desc="t('docs.update_mapping_desc')" json='{ "subdomain": "store", "port": 9000 }' />
+                        <EndpointRow method="DELETE" path="/subdomains/{id}" :desc="t('docs.delete_mapping_desc')" />
                     </div>
                 </div>
 
                 <!-- System -->
                 <div>
-                    <h3 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-[0.2em]">System Operations</h3>
+                    <h3 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-[0.2em]">{{ t('docs.system_ops') }}</h3>
                     <div class="grid grid-cols-1 gap-4">
-                        <EndpointRow method="POST" path="/system/token/renew" desc="Generate a new API token for the current user." />
-                        <EndpointRow method="POST" path="/system/reset" desc="WIPE all data and start onboarding (DANGER)." />
-                        <EndpointRow method="POST" path="/settings" desc="Save app-wide settings (e.g. app_mode)." json='{ "settings": { "app_mode": "dashboard" } }' />
+                        <EndpointRow method="POST" path="/system/token/renew" :desc="t('docs.renew_api_token_desc')" />
+                        <EndpointRow method="POST" path="/system/reset" :desc="t('docs.reset_system_desc')" />
+                        <EndpointRow method="POST" path="/settings" :desc="t('docs.save_settings_desc')" json='{ "settings": { "app_mode": "dashboard" } }' />
                     </div>
                 </div>
             </div>
@@ -109,11 +109,9 @@
 
         <!-- Examples -->
         <section class="bg-indigo-600/5 border border-indigo-500/10 p-8 rounded-3xl">
-            <h2 class="text-xl font-bold mb-4">Pro Tip: Custom Port Control</h2>
+            <h2 class="text-xl font-bold mb-4">{{ t('docs.pro_tip_title') }}</h2>
             <p class="text-slate-400 text-sm leading-relaxed font-medium">
-                By default, FlareBridge generates a unique random port (3000-9000). 
-                However, you can specify your own <code class="text-indigo-400">port</code> in the payload. 
-                FlareBridge will validate that the port is not already in use by another tunnel mapping before saving.
+                {{ t('docs.pro_tip_desc') }}
             </p>
         </section>
     </div>
@@ -122,7 +120,9 @@
 <script setup>
 import { ref, onMounted, defineProps } from 'vue';
 import axios from 'axios';
+import { useI18n } from '../composables/useI18n';
 
+const { t } = useI18n();
 const apiUrl = window.location.origin;
 const currentToken = ref('');
 const renewing = ref(false);
@@ -130,17 +130,14 @@ const copied = ref(false);
 
 const fetchToken = async () => {
     try {
-        // We get it from localStorage first, or the API if we want the actual hashed version (not ideal for display but good for verification)
-        // Actually, we should display the plain text token only once or keep it in storage.
-        // For FlareBridge, we'll show what's in localStorage or the partial one.
         currentToken.value = localStorage.getItem('flare_token');
     } catch (e) {
-        console.error('Failed to get token');
+        console.error(t('docs.fetch_token_error'));
     }
 };
 
 const renewToken = async () => {
-    if (!confirm('Are you sure? All existing scripts using this token will break.')) return;
+    if (!confirm(t('docs.renew_confirm'))) return;
     renewing.value = true;
     try {
         const { data } = await axios.post('/api/v1/system/token/renew');
@@ -148,9 +145,9 @@ const renewToken = async () => {
         localStorage.setItem('flare_token', token);
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         currentToken.value = token;
-        alert('Token renewed successfully and updated in your session.');
+        alert(t('docs.renew_success'));
     } catch (e) {
-        alert('Failed to renew token');
+        alert(t('docs.renew_error'));
     } finally {
         renewing.value = false;
     }

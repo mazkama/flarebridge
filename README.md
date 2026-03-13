@@ -15,6 +15,7 @@ FlareBridge is protected by **Laravel Sanctum**. To use the API, you must provid
 
 ## 🚀 Key Features
 
+-   **Multi-language Support**: Seamless switching between English and Indonesian with persistent settings.
 -   **Custom Port Control**: Option to manually assign ports or let FlareBridge auto-generate them.
 -   **Fully Responsive UI**: Modern dashboard optimized for mobile, tablet, and desktop view.
 -   **Automated DNS Sync**: Automatically creates/updates CNAME records for subdomains.

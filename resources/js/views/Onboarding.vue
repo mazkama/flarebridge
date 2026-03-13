@@ -1,5 +1,14 @@
 <template>
     <div class="flex items-center justify-center min-h-screen p-6 relative overflow-hidden bg-slate-950">
+        <!-- Language Switcher Floating -->
+        <div class="absolute top-8 right-8 z-[60] flex items-center bg-slate-900/50 backdrop-blur-md rounded-xl p-1 border border-white/5">
+            <button v-for="l in allLocales" :key="l" @click="setLocale(l)"
+                class="px-3 py-1.5 rounded-lg text-[10px] font-black transition-all uppercase"
+                :class="locale === l ? 'bg-indigo-500 text-white' : 'text-slate-500 hover:text-slate-300'">
+                {{ l }}
+            </button>
+        </div>
+
         <!-- Background Decorations -->
         <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/20 blur-[120px] rounded-full"></div>
         <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/20 blur-[120px] rounded-full"></div>
@@ -13,8 +22,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                     </div>
-                    <h1 class="text-2xl md:text-3xl font-bold tracking-tight mb-2">Welcome to FlareBridge</h1>
-                    <p class="text-slate-400 text-sm md:text-base">Let's get your professional subdomain api ready in a few steps.</p>
+                    <h1 class="text-2xl md:text-3xl font-bold tracking-tight mb-2">{{ t('onboarding.welcome') }}</h1>
+                    <p class="text-slate-400 text-sm md:text-base">{{ t('onboarding.subtitle') }}</p>
                 </div>
 
                 <!-- Step Indicator -->
@@ -32,31 +41,31 @@
                 <div v-if="step === 1" class="space-y-6 animate-fade-in">
                     <div>
                         <h2 class="text-xl font-semibold mb-6 flex items-center">
-                            Step 1: Cloudflare Credentials
-                            <span class="ml-2 text-xs bg-indigo-500/20 text-indigo-400 px-2 py-1 rounded tracking-widest">SECURE</span>
+                            {{ t('onboarding.step1_title') }}
+                            <span class="ml-2 text-xs bg-indigo-500/20 text-indigo-400 px-2 py-1 rounded tracking-widest uppercase font-black">{{ t('onboarding.step1_secure') }}</span>
                         </h2>
                         <div class="space-y-4">
                             <div class="space-y-2">
                                 <label class="text-sm font-medium text-slate-300 flex items-center">
-                                    Cloudflare Email
+                                    {{ t('onboarding.email_label') }}
                                     <div class="group relative ml-2">
                                         <span class="cursor-help text-slate-600 hover:text-indigo-400 text-xs">?</span>
-                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50">
-                                            The email address associated with your Cloudflare account. **Only required for Global API Key.**
+                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50 normal-case">
+                                            {{ t('onboarding.email_hint') }}
                                         </div>
                                     </div>
                                 </label>
                                 <input v-model="form.cloudflare_email" type="email" placeholder="e.g. admin@example.com"
                                     class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600">
-                                <p class="text-[10px] text-slate-500 font-medium">LEAVE BLANK IF USING SCOPED API TOKEN.</p>
+                                <p class="text-[10px] text-slate-500 font-medium uppercase">{{ t('onboarding.email_placeholder_hint') }}</p>
                             </div>
                             <div class="space-y-2">
                                 <label class="text-sm font-medium text-slate-300 flex items-center">
-                                    Cloudflare API Token / Global Key
+                                    {{ t('onboarding.token_label') }}
                                     <div class="group relative ml-2">
                                         <span class="cursor-help text-slate-600 hover:text-indigo-400 text-xs">?</span>
-                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50">
-                                            Found in **Cloudflare Profile > API Tokens**. We recommend using a Scoped Token with 'DNS:Edit' and 'Zones:Read' permissions.
+                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50 normal-case">
+                                            {{ t('onboarding.token_hint') }}
                                         </div>
                                     </div>
                                 </label>
@@ -70,15 +79,15 @@
                 <!-- Step 2: Primary Domain -->
                 <div v-if="step === 2" class="space-y-6 animate-fade-in">
                     <div>
-                        <h2 class="text-xl font-semibold mb-6">Step 2: Primary Domain & Zone</h2>
+                        <h2 class="text-xl font-semibold mb-6">{{ t('onboarding.step2_title') }}</h2>
                         <div class="space-y-4">
                             <div class="space-y-2">
                                 <label class="text-sm font-medium text-slate-300 flex items-center">
-                                    Domain Name
+                                    {{ t('onboarding.domain_label') }}
                                     <div class="group relative ml-2">
                                         <span class="cursor-help text-slate-600 hover:text-indigo-400 text-xs">?</span>
-                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50">
-                                            The root domain you want to use (e.g. example.com). Must be managed by this Cloudflare account.
+                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50 normal-case">
+                                            {{ t('onboarding.domain_hint') }}
                                         </div>
                                     </div>
                                 </label>
@@ -88,24 +97,24 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="space-y-2">
                                     <label class="text-sm font-medium text-slate-300 flex items-center">
-                                        Zone ID
+                                        {{ t('onboarding.zone_label') }}
                                         <div class="group relative ml-2">
                                             <span class="cursor-help text-slate-600 hover:text-indigo-400 text-xs">?</span>
-                                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50">
-                                                Copy this from the **Domain Overview** sidebar in Cloudflare.
+                                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50 normal-case">
+                                                {{ t('onboarding.zone_hint') }}
                                             </div>
                                         </div>
                                     </label>
-                                    <input v-model="domain.zone_id" type="text" placeholder="e.g. d41d8cd98f00b204e9800998ecf8427e"
+                                    <input v-model="domain.zone_id" type="text" placeholder="e.g. d41d8cd98f00b204e9..."
                                         class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-xs">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-sm font-medium text-slate-300 flex items-center">
-                                        Account ID
+                                        {{ t('onboarding.account_label') }}
                                         <div class="group relative ml-2">
                                             <span class="cursor-help text-slate-600 hover:text-indigo-400 text-xs">?</span>
-                                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50">
-                                                Copy this from the **Dashboard URL** or bottom of the Domain Overview sidebar.
+                                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50 normal-case">
+                                                {{ t('onboarding.account_hint') }}
                                             </div>
                                         </div>
                                     </label>
@@ -115,11 +124,11 @@
                             </div>
                             <div class="space-y-2">
                                 <label class="text-sm font-medium text-slate-300 flex items-center">
-                                    Tunnel ID
+                                    {{ t('onboarding.tunnel_label') }}
                                     <div class="group relative ml-2">
                                         <span class="cursor-help text-slate-600 hover:text-indigo-400 text-xs">?</span>
-                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50">
-                                            The ID of the tunnel created in Zero Trust > Networks > Tunnels.
+                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50 normal-case">
+                                            {{ t('onboarding.tunnel_hint') }}
                                         </div>
                                     </div>
                                 </label>
@@ -133,18 +142,18 @@
                 <!-- Step 3: Admin Account -->
                 <div v-if="step === 3" class="space-y-6 animate-fade-in">
                     <div>
-                        <h2 class="text-xl font-semibold mb-6">Step 3: Administrative Account</h2>
+                        <h2 class="text-xl font-semibold mb-6">{{ t('onboarding.step3_title') }}</h2>
                         <div class="space-y-4">
                             <div class="space-y-2">
-                                <label class="text-sm font-medium text-slate-300">Admin Full Name</label>
+                                <label class="text-sm font-medium text-slate-300">{{ t('onboarding.admin_name') }}</label>
                                 <input v-model="form.admin_name" type="text" placeholder="e.g. John Doe"
                                     class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
                             </div>
                             <div class="space-y-2">
-                                <label class="text-sm font-medium text-slate-300">Admin Email</label>
+                                <label class="text-sm font-medium text-slate-300">{{ t('onboarding.admin_email') }}</label>
                                 <input v-model="form.admin_email" type="email" placeholder="admin@example.com"
                                     class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
-                                <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">This will be your login username.</p>
+                                <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{{ t('onboarding.admin_email_hint') }}</p>
                             </div>
                         </div>
                     </div>
@@ -153,27 +162,27 @@
                 <!-- Step 4: Ready to Launch -->
                 <div v-if="step === 4" class="space-y-6 text-center animate-fade-in">
                     <div>
-                        <h2 class="text-xl font-semibold mb-6">Registration Summary</h2>
+                        <h2 class="text-xl font-semibold mb-6">{{ t('onboarding.step4_title') }}</h2>
                         <div class="p-6 bg-indigo-500/5 border border-indigo-500/20 rounded-2xl mb-8 relative overflow-hidden">
-                            <div class="absolute top-0 right-0 p-4 opacity-5">
+                            <div class="absolute top-0 right-0 p-4 opacity-5 text-white">
                                 <svg class="w-16 h-16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                             </div>
                             <div class="space-y-3">
                                 <div class="flex items-center justify-between text-sm">
-                                    <span class="text-slate-500 italic">Target Domain</span>
+                                    <span class="text-slate-500 italic">{{ t('onboarding.target_domain') }}</span>
                                     <span class="text-white font-black">{{ domain.domain }}</span>
                                 </div>
                                 <div class="flex items-center justify-between text-sm">
-                                    <span class="text-slate-500 italic">Admin Name</span>
+                                    <span class="text-slate-500 italic">{{ t('onboarding.admin_name_label') }}</span>
                                     <span class="text-white font-black">{{ form.admin_name }}</span>
                                 </div>
                                 <div class="flex items-center justify-between text-sm">
-                                    <span class="text-slate-500 italic">Login Username</span>
+                                    <span class="text-slate-500 italic">{{ t('onboarding.username_label') }}</span>
                                     <span class="text-indigo-400 font-black font-mono">{{ form.admin_email }}</span>
                                 </div>
                             </div>
                         </div>
-                        <p class="text-slate-400 text-sm">Everything looks good! Click the button below to complete setup.</p>
+                        <p class="text-slate-400 text-sm">{{ t('onboarding.ready_message') }}</p>
                     </div>
                 </div>
 
@@ -181,7 +190,7 @@
                 <div class="mt-12 flex items-center justify-between">
                     <button v-if="step > 1" @click="step--" :disabled="loading"
                         class="px-6 py-3 font-medium text-slate-400 hover:text-white transition-colors disabled:opacity-20">
-                        Back
+                        {{ t('common.back') }}
                     </button>
                     <div v-else></div>
 
@@ -193,7 +202,7 @@
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
                         </span>
-                        <span>{{ step === 4 ? 'Complete Setup' : 'Next Step' }}</span>
+                        <span>{{ step === 4 ? t('onboarding.complete_setup') : t('common.next') }}</span>
                         <svg v-if="!loading" class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                         </svg>
@@ -238,11 +247,13 @@
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { useI18n } from '../composables/useI18n';
 
 const step = ref(1);
 const loading = ref(false);
 const router = useRouter();
 const toasts = ref([]);
+const { t, locale, allLocales, setLocale } = useI18n();
 
 const form = reactive({
     cloudflare_email: '',
@@ -270,15 +281,15 @@ const removeToast = (id) => {
 
 const handleNext = async () => {
     if (step.value === 1) {
-        if (!form.cloudflare_api_token) return showToast('Cloudflare API Token or Global Key is required.');
+        if (!form.cloudflare_api_token) return showToast(t('onboarding.token_label') + ' is required.');
         await validateStep(1);
     } else if (step.value === 2) {
-        if (!domain.domain) return showToast('Domain name is missing.');
+        if (!domain.domain) return showToast(t('onboarding.domain_label') + ' is missing.');
         if (!domain.zone_id || !domain.account_id || !domain.tunnel_id) 
             return showToast('Zone, Account, and Tunnel IDs are all required for syncing.');
         await validateStep(2);
     } else if (step.value === 3) {
-        if (!form.admin_name || !form.admin_email) return showToast('Admin contact details are required.');
+        if (!form.admin_name || !form.admin_email) return showToast(t('onboarding.step3_title') + ' details are required.');
         step.value++;
     } else {
         finishOnboarding();
@@ -298,7 +309,7 @@ const validateStep = async (stepNumber) => {
         });
         step.value++;
     } catch (error) {
-        const msg = error.response?.data?.message || 'We could not verify your Cloudflare credentials. Please check for typos.';
+        const msg = error.response?.data?.message || t('onboarding.error_credentials');
         showToast(msg, 'error');
     } finally {
         loading.value = false;
@@ -316,7 +327,7 @@ const finishOnboarding = async () => {
         const { data } = await axios.post('/api/setup', payload);
 
         if (data.status === 'success') {
-            showToast('Handshake successful! Welcome to FlareBridge.', 'success');
+            showToast(t('onboarding.success_handshake'), 'success');
             localStorage.setItem('flare_token', data.data.token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${data.data.token}`;
             setTimeout(() => router.push('/'), 1200);

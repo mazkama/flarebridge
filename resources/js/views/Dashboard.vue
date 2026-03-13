@@ -15,16 +15,25 @@
                 <button @click="setMode('docs')" 
                     class="px-4 py-2 rounded-lg text-sm font-medium transition-all"
                     :class="appMode === 'docs' ? 'bg-indigo-500 text-white shadow-lg' : 'text-slate-400 hover:text-white'">
-                    Documentation
+                    {{ t('dashboard.docs_nav') }}
                 </button>
                 <button @click="setMode('dashboard')" 
                     class="px-4 py-2 rounded-lg text-sm font-medium transition-all"
                     :class="appMode === 'dashboard' ? 'bg-indigo-500 text-white shadow-lg' : 'text-slate-400 hover:text-white'">
-                    Management
+                    {{ t('dashboard.management') }}
                 </button>
             </div>
 
             <div class="flex items-center space-x-2">
+                <!-- Language Switcher -->
+                <div class="flex bg-slate-800/50 p-1 rounded-xl border border-white/5 mr-2">
+                    <button v-for="l in allLocales" :key="l" @click="setLocale(l)"
+                        class="px-2 py-1 rounded-lg text-[10px] font-black transition-all uppercase"
+                        :class="locale === l ? 'bg-indigo-500 text-white' : 'text-slate-500 hover:text-slate-300'">
+                        {{ l }}
+                    </button>
+                </div>
+
                 <button @click="showMobileMenu = !showMobileMenu" class="lg:hidden p-2 text-slate-400 hover:text-white transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path v-if="!showMobileMenu" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
@@ -35,7 +44,7 @@
                     <span class="text-sm font-bold">{{ user.name }}</span>
                     <span class="text-xs text-slate-500">{{ user.email }}</span>
                 </div>
-                <button @click="logout" class="p-2 text-slate-400 hover:text-red-400 transition-colors" title="Logout">
+                <button @click="logout" class="p-2 text-slate-400 hover:text-red-400 transition-colors" :title="t('common.logout')">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
@@ -54,8 +63,8 @@
                         <!-- Sidebar: Domains -->
                         <div class="lg:col-span-1 space-y-6 lg:block" :class="showMobileMenu ? 'block' : 'hidden'">
                             <div class="flex items-center justify-between">
-                                <h2 class="text-xl font-bold">Domains</h2>
-                                <button @click="showAddDomain = true" class="lg:hidden text-indigo-400 text-sm font-bold">+ New</button>
+                                <h2 class="text-xl font-bold">{{ t('dashboard.domains') }}</h2>
+                                <button @click="showAddDomain = true" class="lg:hidden text-indigo-400 text-sm font-bold">+ {{ t('common.new') }}</button>
                             </div>
                             <div class="space-y-3">
                                 <div v-for="domain in domains" :key="domain.id" 
@@ -81,17 +90,17 @@
                                 </div>
                             </div>
                             <button @click="showAddDomain = true" class="hidden lg:block w-full py-3 border border-dashed border-white/10 rounded-xl text-slate-500 hover:text-indigo-400 hover:border-indigo-500/40 transition-all text-sm font-medium">
-                                + Add New Domain
+                                + {{ t('dashboard.add_new_domain') }}
                             </button>
 
                             <!-- Danger Zone -->
                             <div class="pt-10 mt-10 border-t border-white/5">
-                                <h3 class="text-xs font-bold text-slate-600 uppercase tracking-widest mb-4">Danger Zone</h3>
+                                <h3 class="text-xs font-bold text-slate-600 uppercase tracking-widest mb-4">{{ t('dashboard.danger_zone') }}</h3>
                                 <button @click="showResetModal = true" class="w-full py-3 px-4 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
-                                    <span>Reset FlareBridge</span>
+                                    <span>{{ t('dashboard.reset_button') }}</span>
                                 </button>
                             </div>
                         </div>
@@ -102,11 +111,11 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <h2 class="text-2xl font-bold">{{ selectedDomain.domain }}</h2>
-                                        <p class="text-slate-400 text-sm">Managing subdomains for this zone.</p>
+                                        <p class="text-slate-400 text-sm">{{ t('dashboard.managing_subdomains') }}</p>
                                     </div>
                                     <button @click="showAddSubdomain = true" 
                                         class="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-lg shadow-lg shadow-indigo-500/20 transition-all active:scale-95 text-sm">
-                                        New Subdomain
+                                        {{ t('dashboard.new_subdomain') }}
                                     </button>
                                 </div>
 
@@ -114,10 +123,10 @@
                                     <table class="w-full text-left min-w-[600px]">
                                         <thead>
                                             <tr class="bg-slate-800/50 text-slate-400 text-xs font-bold uppercase tracking-wider">
-                                                <th class="px-6 py-4">Subdomain</th>
-                                                <th class="px-6 py-4">Port</th>
-                                                <th class="px-6 py-4">Full URL</th>
-                                                <th class="px-6 py-4 text-right">Actions</th>
+                                                <th class="px-6 py-4">{{ t('dashboard.subdomain') }}</th>
+                                                <th class="px-6 py-4">{{ t('dashboard.port') }}</th>
+                                                <th class="px-6 py-4">{{ t('dashboard.full_url') }}</th>
+                                                <th class="px-6 py-4 text-right">{{ t('dashboard.actions') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-white/5">
@@ -143,7 +152,7 @@
                                                 </td>
                                             </tr>
                                             <tr v-if="subdomains.length === 0">
-                                                <td colspan="4" class="px-6 py-12 text-center text-slate-500 italic">No subdomains found. Create your first one!</td>
+                                                <td colspan="4" class="px-6 py-12 text-center text-slate-500 italic">{{ t('dashboard.no_subdomains') }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -154,7 +163,7 @@
                                 <svg class="w-16 h-16 text-slate-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                 </svg>
-                                <p class="text-slate-500 font-medium">Select a domain from the sidebar to manage subdomains.</p>
+                                <p class="text-slate-500 font-medium">{{ t('dashboard.select_domain') }}</p>
                             </div>
                         </div>
                     </div>
@@ -171,17 +180,17 @@
         <div v-if="showAddSubdomain || editingSub" class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-sm">
             <div class="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl p-8 shadow-2xl">
                 <h3 class="text-xl font-bold mb-6 flex items-center justify-between">
-                    {{ editingSub ? 'Edit Subdomain' : 'Create New Subdomain' }}
+                    {{ editingSub ? t('dashboard.edit_subdomain_title') : t('dashboard.create_subdomain_title') }}
                     <span v-if="editingSub" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-1 rounded">ID: {{ subForm.id }}</span>
                 </h3>
                 <div class="space-y-5 mb-8">
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
-                            Subdomain Prefix
+                            {{ t('dashboard.subdomain_prefix') }}
                             <div class="group relative ml-2">
                                 <span class="cursor-help text-slate-600 hover:text-indigo-400">?</span>
                                 <div class="absolute bottom-full left-0 mb-2 w-48 p-2 bg-slate-800 text-[10px] rounded shadowing-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                                    The name of your subdomain (e.g. 'blog' for blog.{{ selectedDomain?.domain }})
+                                    {{ t('dashboard.subdomain_hint') }}
                                 </div>
                             </div>
                         </label>
@@ -195,16 +204,16 @@
                     <div class="space-y-3 pt-2">
                         <div class="flex items-center justify-between">
                             <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
-                                Application Port
+                                {{ t('dashboard.app_port') }}
                                 <div class="group relative ml-2">
                                     <span class="cursor-help text-slate-600 hover:text-indigo-400">?</span>
                                     <div class="absolute bottom-full left-0 mb-2 w-48 p-2 bg-slate-800 text-[10px] rounded shadowing-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                                        The local port where your application is running. Must be unique in this tunnel.
+                                        {{ t('dashboard.port_hint') }}
                                     </div>
                                 </div>
                             </label>
                             <label class="flex items-center cursor-pointer">
-                                <span class="mr-2 text-[10px] font-bold text-slate-600 uppercase">{{ subForm.customPort ? 'Custom' : 'Auto' }}</span>
+                                <span class="mr-2 text-[10px] font-bold text-slate-600 uppercase">{{ subForm.customPort ? t('common.custom') : t('common.auto') }}</span>
                                 <div class="relative">
                                     <input type="checkbox" v-model="subForm.customPort" class="sr-only">
                                     <div class="w-8 h-4 bg-slate-800 rounded-full border border-white/5"></div>
@@ -216,15 +225,15 @@
                         <div v-if="subForm.customPort" class="animate-fade-in">
                             <input v-model="subForm.port" type="number" placeholder="e.g. 8080"
                                 class="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all font-mono text-white">
-                            <p class="text-[10px] text-slate-500 mt-1">Leave empty to auto-generate if toggled.</p>
+                            <p class="text-[10px] text-slate-500 mt-1">{{ t('dashboard.port_auto_hint') }}</p>
                         </div>
                         <div v-else class="px-4 py-3 bg-slate-800/30 border border-dashed border-white/5 rounded-xl text-slate-500 text-xs italic">
-                            Port will be automatically assigned.
+                            {{ t('dashboard.port_assigned_hint') }}
                         </div>
                     </div>
                 </div>
                 <div class="flex space-x-3">
-                    <button @click="closeSubModal" class="flex-grow py-3 text-slate-400 hover:text-white transition-colors text-sm font-bold">Cancel</button>
+                    <button @click="closeSubModal" class="flex-grow py-3 text-slate-400 hover:text-white transition-colors text-sm font-bold">{{ t('common.cancel') }}</button>
                     <button @click="saveSubdomain" :disabled="!subForm.subdomain || creating"
                         class="flex-grow py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-black rounded-xl transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-indigo-500/20 text-sm">
                         <span v-if="creating" class="flex items-center justify-center">
@@ -232,9 +241,9 @@
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            Saving
+                            {{ t('common.saving') }}
                         </span>
-                        <span v-else>{{ editingSub ? 'Update Mapping' : 'Create Mapping' }}</span>
+                        <span v-else>{{ editingSub ? t('dashboard.update_mapping') : t('dashboard.create_mapping') }}</span>
                     </button>
                 </div>
             </div>
@@ -243,15 +252,15 @@
         <!-- Modal: Add/Edit Domain -->
         <div v-if="showAddDomain || editingDom" class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-sm">
             <div class="w-full max-w-lg bg-slate-900 border border-white/10 rounded-2xl p-8 shadow-2xl">
-                <h3 class="text-xl font-bold mb-6">{{ editingDom ? 'Edit Domain Configuration' : 'Register New Domain' }}</h3>
+                <h3 class="text-xl font-bold mb-6">{{ editingDom ? t('dashboard.edit_domain_title') : t('dashboard.register_domain_title') }}</h3>
                 <div class="space-y-4 mb-8">
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
-                            Domain Name
+                            {{ t('onboarding.domain_label') }}
                             <div class="group relative ml-2">
                                 <span class="cursor-help text-slate-600 hover:text-indigo-400">?</span>
                                 <div class="absolute bottom-full left-0 mb-2 w-48 p-2 bg-slate-800 text-[10px] rounded shadowing-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                                    The root domain managed in Cloudflare (e.g. example.com)
+                                    {{ t('onboarding.domain_hint') }}
                                 </div>
                             </div>
                         </label>
@@ -261,11 +270,11 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-2">
                             <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
-                                Zone ID
+                                {{ t('onboarding.zone_label') }}
                                 <div class="group relative ml-2">
                                     <span class="cursor-help text-slate-600 hover:text-indigo-400">?</span>
                                     <div class="absolute bottom-full left-0 mb-2 w-48 p-2 bg-slate-800 text-[10px] rounded shadowing-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                                        Cloudflare Zone ID found on Domain Overview page.
+                                        {{ t('onboarding.zone_hint') }}
                                     </div>
                                 </div>
                             </label>
@@ -274,11 +283,11 @@
                         </div>
                         <div class="space-y-2">
                             <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
-                                Account ID
+                                {{ t('onboarding.account_label') }}
                                 <div class="group relative ml-2">
                                     <span class="cursor-help text-slate-600 hover:text-indigo-400">?</span>
                                     <div class="absolute bottom-full left-0 mb-2 w-48 p-2 bg-slate-800 text-[10px] rounded shadowing-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                                        Cloudflare Account ID found in your dashboard URL or sidebar.
+                                        {{ t('onboarding.account_hint') }}
                                     </div>
                                 </div>
                             </label>
@@ -288,11 +297,11 @@
                     </div>
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
-                            Tunnel ID
+                            {{ t('onboarding.tunnel_label') }}
                             <div class="group relative ml-2">
                                 <span class="cursor-help text-slate-600 hover:text-indigo-400">?</span>
                                 <div class="absolute bottom-full left-0 mb-2 w-48 p-2 bg-slate-800 text-[10px] rounded shadowing-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                                    The ID of your Cloudflare Zero Trust Tunnel.
+                                    {{ t('onboarding.tunnel_hint') }}
                                 </div>
                             </div>
                         </label>
@@ -301,10 +310,10 @@
                     </div>
                 </div>
                 <div class="flex space-x-3">
-                    <button @click="closeDomainModal" class="flex-grow py-3 text-slate-400 hover:text-white transition-colors">Cancel</button>
+                    <button @click="closeDomainModal" class="flex-grow py-3 text-slate-400 hover:text-white transition-colors">{{ t('common.cancel') }}</button>
                     <button @click="saveDomain" :disabled="creatingDomain || !domainForm.domain"
                         class="flex-grow py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl transition-all active:scale-95 disabled:opacity-50">
-                        {{ creatingDomain ? 'Saving...' : (editingDom ? 'Update' : 'Register') }}
+                        {{ creatingDomain ? t('common.saving') : (editingDom ? t('common.update') : t('common.register')) }}
                     </button>
                 </div>
             </div>
@@ -320,10 +329,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
                     </div>
-                    <h3 class="text-2xl font-black mb-2 text-white">Wipe Everything?</h3>
+                    <h3 class="text-2xl font-black mb-2 text-white">{{ t('dashboard.reset_confirm_title') }}</h3>
                     <p class="text-slate-400 mb-8 text-sm leading-relaxed">
-                        This will permanently delete all <span class="text-white font-bold">domains, subdomains, users, and settings</span>. 
-                        FlareBridge will return to the onboarding screen. This action cannot be undone.
+                        {{ t('dashboard.reset_confirm_desc') }}
                     </p>
                     <div class="space-y-3">
                         <button @click="performReset" :disabled="resetting"
@@ -334,10 +342,10 @@
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                             </span>
-                            {{ resetting ? 'Wiping System...' : 'YES, RESET SYSTEM' }}
+                            {{ resetting ? t('dashboard.resetting') : t('dashboard.reset_confirm_button') }}
                         </button>
                         <button @click="showResetModal = false" :disabled="resetting" class="w-full py-4 text-slate-500 hover:text-white font-bold transition-colors">
-                            Wait, Take Me Back
+                            {{ t('dashboard.reset_cancel') }}
                         </button>
                     </div>
                 </div>
@@ -351,7 +359,9 @@ import { ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import Docs from './Docs.vue';
+import { useI18n } from '../composables/useI18n';
 
+const { t, locale, allLocales, setLocale } = useI18n();
 const router = useRouter();
 const appMode = ref('docs');
 const user = ref(null);
@@ -415,7 +425,7 @@ const fetchDomains = async () => {
             selectDomain(domains.value[0]);
         }
     } catch (error) {
-        console.error('Failed to fetch domains');
+        console.error(t('dashboard.fetch_domains_error'));
     }
 };
 
@@ -430,7 +440,7 @@ const fetchSubdomains = async () => {
         const { data } = await axios.get(`/api/v1/subdomains?domain_id=${selectedDomain.value.id}`);
         subdomains.value = data.data;
     } catch (error) {
-        console.error('Failed to fetch subdomains');
+        console.error(t('dashboard.fetch_subdomains_error'));
     }
 };
 
@@ -447,7 +457,7 @@ const saveDomain = async () => {
         closeDomainModal();
         await fetchDomains();
     } catch (error) {
-        alert(error.response?.data?.message || 'Failed to save domain. Make sure Zone ID and Account ID are valid.');
+        alert(error.response?.data?.message || t('dashboard.save_domain_error'));
     } finally {
         creatingDomain.value = false;
     }
@@ -464,13 +474,13 @@ const editDomain = (domain) => {
 };
 
 const deleteDomain = async (id) => {
-    if (!confirm('Are you sure you want to delete this domain? Active subdomains must be removed first.')) return;
+    if (!confirm(t('dashboard.delete_domain_confirm'))) return;
     try {
         await axios.delete(`/api/v1/domains/${id}`);
         if (selectedDomain.value?.id === id) selectedDomain.value = null;
         await fetchDomains();
     } catch (error) {
-        alert(error.response?.data?.message || 'Failed to delete domain');
+        alert(error.response?.data?.message || t('dashboard.delete_domain_error'));
     }
 };
 
@@ -505,7 +515,7 @@ const saveSubdomain = async () => {
         closeSubModal();
         await fetchSubdomains();
     } catch (error) {
-        alert(error.response?.data?.message || 'Failed to save subdomain');
+        alert(error.response?.data?.message || t('dashboard.save_subdomain_error'));
     } finally {
         creating.value = false;
     }
@@ -521,12 +531,12 @@ const editSubdomain = (sub) => {
 };
 
 const confirmDeleteSubdomain = async (id) => {
-    if (!confirm('Are you sure you want to delete this subdomain and sync with Cloudflare?')) return;
+    if (!confirm(t('dashboard.delete_subdomain_confirm'))) return;
     try {
         await axios.delete(`/api/v1/subdomains/${id}`);
         await fetchSubdomains();
     } catch (error) {
-        alert('Failed to delete subdomain');
+        alert(t('dashboard.delete_subdomain_error'));
     }
 };
 
@@ -566,7 +576,7 @@ const performReset = async () => {
         localStorage.removeItem('flare_token');
         window.location.href = '/onboarding';
     } catch (error) {
-        alert('Failed to reset system: ' + (error.response?.data?.message || error.message));
+        alert(t('dashboard.reset_error') + ': ' + (error.response?.data?.message || error.message));
         resetting.value = false;
     }
 };

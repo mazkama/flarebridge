@@ -262,7 +262,7 @@
 						"method": "POST",
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"domain_id\": 1,\n    \"subdomain\": \"myapp\"\n}"
+							"raw": "{\n    \"domain_id\": 1,\n    \"subdomain\": \"myapp\",\n    \"port\": 8080\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/subdomains",
@@ -284,7 +284,7 @@
 						"method": "PUT",
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"subdomain\": \"newname\"\n}"
+							"raw": "{\n    \"subdomain\": \"newname\",\n    \"port\": 9000\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/subdomains/1",
