@@ -25,15 +25,6 @@
             </div>
 
             <div class="flex items-center space-x-2">
-                <!-- Language Switcher -->
-                <div class="flex bg-slate-800/50 p-1 rounded-xl border border-white/5 mr-2">
-                    <button v-for="l in allLocales" :key="l" @click="setLocale(l)"
-                        class="px-2 py-1 rounded-lg text-[10px] font-black transition-all uppercase"
-                        :class="locale === l ? 'bg-indigo-500 text-white' : 'text-slate-500 hover:text-slate-300'">
-                        {{ l }}
-                    </button>
-                </div>
-
                 <button @click="showMobileMenu = !showMobileMenu" class="lg:hidden p-2 text-slate-400 hover:text-white transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path v-if="!showMobileMenu" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
@@ -102,6 +93,18 @@
                                     </svg>
                                     <span>{{ t('dashboard.reset_button') }}</span>
                                 </button>
+                            </div>
+
+                            <!-- Footer Settings -->
+                            <div class="pt-6 mt-6 border-t border-white/5 flex items-center justify-between">
+                                <div class="flex bg-slate-900/50 p-1 rounded-xl border border-white/5">
+                                    <button v-for="l in allLocales" :key="l" @click="setLocale(l)"
+                                        class="px-2.5 py-1 rounded-lg text-[9px] font-black transition-all uppercase"
+                                        :class="locale === l ? 'bg-indigo-500 text-white shadow-lg' : 'text-slate-500 hover:text-slate-400'">
+                                        {{ l }}
+                                    </button>
+                                </div>
+                                <span class="text-[10px] text-slate-700 font-bold uppercase tracking-widest">v1.1</span>
                             </div>
                         </div>
 
