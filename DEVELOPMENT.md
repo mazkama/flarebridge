@@ -64,7 +64,7 @@ API ini dirancang untuk berintegrasi dengan **Cloudflare Zero Trust Tunnel**.
 | `POST` | `/api/login` | Authenticate and get token |
 | `POST` | `/api/logout` | Revoke current token |
 | `GET` | `/api/v1/domains` | List all root domains |
-| `POST` | `/api/v1/domains` | Register new domain (w/ validation) |
+| `POST` | `/api/v1/domains` | Register new domain (supports multiple tunnels per domain) |
 | `PUT` | `/api/v1/domains/{id}` | Update domain settings |
 | `DELETE` | `/api/v1/domains/{id}` | Delete domain (must be empty) |
 | `GET` | `/api/v1/subdomains` | List all mappings |

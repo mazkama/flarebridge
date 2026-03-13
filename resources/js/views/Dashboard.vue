@@ -67,7 +67,10 @@
                                     @click="selectDomain(domain); showMobileMenu = false">
                                     <div class="flex items-center space-x-3 overflow-hidden">
                                         <div class="w-2 h-2 rounded-full flex-shrink-0" :class="selectedDomain?.id === domain.id ? 'bg-indigo-400' : 'bg-slate-600'"></div>
-                                        <span class="font-medium truncate">{{ domain.domain }}</span>
+                                        <div class="flex flex-col min-w-0">
+                                            <span class="font-medium truncate">{{ domain.domain }}</span>
+                                            <span class="text-[10px] text-slate-500 truncate font-mono">ID: {{ shortId(domain.tunnel_id) }}</span>
+                                        </div>
                                     </div>
                                     <div class="flex items-center space-x-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                                         <button @click.stop="editDomain(domain)" class="p-1 text-slate-500 hover:text-indigo-400">
@@ -411,6 +414,11 @@ const confirmModal = reactive({
     message: '',
     action: () => {}
 });
+
+const shortId = (id) => {
+    if (!id) return '...';
+    return id.length > 8 ? id.substring(id.length - 6) : id;
+};
 
 const showToast = (title, message, type = 'error') => {
     const id = Date.now();

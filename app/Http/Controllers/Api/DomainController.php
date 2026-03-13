@@ -33,7 +33,18 @@ class DomainController extends Controller
     public function store(Request $request)
     {
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-            'domain' => 'required|string|unique:domains,domain',
+            'domain' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) use ($request) {
+                    $exists = \App\Models\Domain::where('domain', $value)
+                        ->where('tunnel_id', $request->tunnel_id)
+                        ->exists();
+                    if ($exists) {
+                        $fail('This domain is already registered with this Tunnel ID.');
+                    }
+                },
+            ],
             'zone_id' => 'required|string',
             'account_id' => 'required|string',
             'tunnel_id' => 'required|string',
