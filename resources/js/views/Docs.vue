@@ -88,10 +88,10 @@
                 <div>
                     <h3 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-[0.2em]">{{ t('docs.domain_mgmt') }}</h3>
                     <div class="grid grid-cols-1 gap-4">
-                        <EndpointRow method="GET" path="/domains" :desc="t('docs.list_domains')" />
-                        <EndpointRow method="POST" path="/domains" :desc="t('docs.register_domain_desc')" json='{ "domain": "example.com", "zone_id": "...", "account_id": "...", "tunnel_id": "..." }' />
-                        <EndpointRow method="PUT" path="/domains/{id}" :desc="t('docs.update_domain_desc')" json='{ "domain": "new.com", "zone_id": "..." }' />
-                        <EndpointRow method="DELETE" path="/domains/{id}" :desc="t('docs.delete_domain_desc')" />
+                        <EndpointRow method="GET" path="/domains" :desc="t('docs.list_domains')" :apiUrl="apiUrl" />
+                        <EndpointRow method="POST" path="/domains" :desc="t('docs.register_domain_desc')" json='{ "domain": "example.com", "zone_id": "...", "account_id": "...", "tunnel_id": "..." }' :apiUrl="apiUrl" />
+                        <EndpointRow method="PUT" path="/domains/{id}" :desc="t('docs.update_domain_desc')" json='{ "domain": "new.com", "zone_id": "..." }' :apiUrl="apiUrl" />
+                        <EndpointRow method="DELETE" path="/domains/{id}" :desc="t('docs.delete_domain_desc')" :apiUrl="apiUrl" />
                     </div>
                 </div>
 
@@ -99,10 +99,10 @@
                 <div>
                     <h3 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-[0.2em]">{{ t('docs.subdomain_mgmt') }}</h3>
                     <div class="grid grid-cols-1 gap-4">
-                        <EndpointRow method="GET" path="/subdomains" :desc="t('docs.list_subdomains')" />
-                        <EndpointRow method="POST" path="/subdomains" :desc="t('docs.create_mapping_desc')" json='{ "domain_id": 1, "subdomain": "shop", "port": 8080 }' />
-                        <EndpointRow method="PUT" path="/subdomains/{id}" :desc="t('docs.update_mapping_desc')" json='{ "subdomain": "store", "port": 9000 }' />
-                        <EndpointRow method="DELETE" path="/subdomains/{id}" :desc="t('docs.delete_mapping_desc')" />
+                        <EndpointRow method="GET" path="/subdomains" :desc="t('docs.list_subdomains')" :apiUrl="apiUrl" />
+                        <EndpointRow method="POST" path="/subdomains" :desc="t('docs.create_mapping_desc')" json='{ "domain_id": 1, "subdomain": "shop", "port": 8080 }' :apiUrl="apiUrl" />
+                        <EndpointRow method="PUT" path="/subdomains/{id}" :desc="t('docs.update_mapping_desc')" json='{ "subdomain": "store", "port": 9000 }' :apiUrl="apiUrl" />
+                        <EndpointRow method="DELETE" path="/subdomains/{id}" :desc="t('docs.delete_mapping_desc')" :apiUrl="apiUrl" />
                     </div>
                 </div>
 
@@ -110,9 +110,9 @@
                 <div>
                     <h3 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-[0.2em]">{{ t('docs.system_ops') }}</h3>
                     <div class="grid grid-cols-1 gap-4">
-                        <EndpointRow method="POST" path="/system/token/renew" :desc="t('docs.renew_api_token_desc')" />
-                        <EndpointRow method="POST" path="/system/reset" :desc="t('docs.reset_system_desc')" />
-                        <EndpointRow method="POST" path="/settings" :desc="t('docs.save_settings_desc')" json='{ "settings": { "app_mode": "dashboard" } }' />
+                        <EndpointRow method="POST" path="/system/token/renew" :desc="t('docs.renew_api_token_desc')" :apiUrl="apiUrl" />
+                        <EndpointRow method="POST" path="/system/reset" :desc="t('docs.reset_system_desc')" :apiUrl="apiUrl" />
+                        <EndpointRow method="POST" path="/settings" :desc="t('docs.save_settings_desc')" json='{ "settings": { "app_mode": "dashboard" } }' :apiUrl="apiUrl" />
                     </div>
                 </div>
             </div>
@@ -262,7 +262,7 @@ onMounted(fetchToken);
 
 // Inner Component for clean list
 const EndpointRow = {
-    props: ['method', 'path', 'desc', 'json'],
+    props: ['method', 'path', 'desc', 'json', 'apiUrl'],
     template: `
         <div class="bg-slate-900/60 rounded-2xl border border-white/5 overflow-hidden group hover:border-white/10 transition-all">
             <div class="p-6">
@@ -274,6 +274,7 @@ const EndpointRow = {
                             'bg-yellow-500/20 text-yellow-400': method === 'PUT',
                             'bg-red-500/20 text-red-400': method === 'DELETE'
                         }" class="px-2.5 py-1 text-[10px] font-black rounded-lg uppercase tracking-widest">{{ method }}</span>
+                        <span class="font-mono text-xs text-slate-400 opacity-50">{{ apiUrl }}/api/v1</span>
                         <span class="font-mono text-sm text-slate-200">{{ path }}</span>
                     </div>
                 </div>
