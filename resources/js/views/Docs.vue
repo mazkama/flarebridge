@@ -101,6 +101,7 @@
                     <div class="grid grid-cols-1 gap-4">
                         <EndpointRow method="GET" path="/subdomains" :desc="t('docs.list_subdomains')" :apiUrl="apiUrl" />
                         <EndpointRow method="POST" path="/subdomains" :desc="t('docs.create_mapping_desc')" json='{ "domain_id": 1, "subdomain": "shop", "port": 8080 }' :apiUrl="apiUrl" />
+                        <EndpointRow method="POST" path="/subdomains" :desc="t('docs.bulk_support_title')" json='{ "subdomains": [ { "domain_id": 1, "subdomain": "api", "port": 3000 }, { "domain_id": 1, "subdomain": "web", "port": 3001 } ] }' :apiUrl="apiUrl" />
                         <EndpointRow method="PUT" path="/subdomains/{id}" :desc="t('docs.update_mapping_desc')" json='{ "subdomain": "store", "port": 9000 }' :apiUrl="apiUrl" />
                         <EndpointRow method="DELETE" path="/subdomains/{id}" :desc="t('docs.delete_mapping_desc')" :apiUrl="apiUrl" />
                     </div>

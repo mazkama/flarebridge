@@ -49,86 +49,115 @@ class SubdomainController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'domain_id' => 'required|exists:domains,id',
-            'subdomain' => [
-                'required',
-                'string',
-                function ($attribute, $value, $fail) use ($request) {
-                    $exists = Service::where('domain_id', $request->domain_id)
-                        ->where('subdomain', $value)
-                        ->exists();
-                    if ($exists) {
-                        $fail('The subdomain has already been taken for this domain.');
-                    }
-                },
-            ],
-            'port' => [
-                'nullable',
-                'numeric',
-                'min:1',
-                'max:65535',
-                function ($attribute, $value, $fail) {
-                    if ($value && Service::where('port', $value)->exists()) {
-                        $fail('The port ' . $value . ' is already in use by another service.');
-                    }
-                }
-            ]
-        ]);
+        $isBatch = $request->has('subdomains') && is_array($request->subdomains);
+        $items = $isBatch ? $request->subdomains : [$request->all()];
+        $results = [];
+        $errors = [];
+        $domainsToSync = [];
 
-        if ($validator->fails()) {
+        foreach ($items as $index => $item) {
+            $validator = Validator::make($item, [
+                'domain_id' => 'required|exists:domains,id',
+                'subdomain' => [
+                    'required',
+                    'string',
+                    function ($attribute, $value, $fail) use ($item) {
+                        $exists = Service::where('domain_id', $item['domain_id'] ?? null)
+                            ->where('subdomain', $value)
+                            ->exists();
+                        if ($exists) {
+                            $fail('The subdomain has already been taken for this domain.');
+                        }
+                    },
+                ],
+                'port' => [
+                    'nullable',
+                    'numeric',
+                    'min:1',
+                    'max:65535',
+                    function ($attribute, $value, $fail) use ($item) {
+                        if ($value && Service::where('port', $value)->exists()) {
+                            $fail('The port ' . $value . ' is already in use by another service.');
+                        }
+                    }
+                ]
+            ]);
+
+            if ($validator->fails()) {
+                $errors[] = [
+                    'index' => $index,
+                    'subdomain' => $item['subdomain'] ?? 'N/A',
+                    'errors' => $validator->errors()
+                ];
+                continue;
+            }
+
+            try {
+                $domain = Domain::findOrFail($item['domain_id']);
+                $port = ($item['port'] ?? null) ?: $this->generatePort();
+
+                $service = Service::create([
+                    'domain_id' => $domain->id,
+                    'subdomain' => $item['subdomain'],
+                    'full_domain' => $item['subdomain'] . '.' . $domain->domain,
+                    'port' => $port,
+                    'status' => 'active',
+                ]);
+
+                // 1. Sync DNS Record Immediately
+                $this->cloudflare->upsertDnsRecord(
+                    $service->subdomain, 
+                    $domain->domain, 
+                    $domain->zone_id, 
+                    $domain->tunnel_id
+                );
+
+                $results[] = [
+                    'id' => $service->id,
+                    'url' => $service->full_domain,
+                    'port' => $service->port,
+                ];
+
+                // Track which domains need Ingress update
+                if (!isset($domainsToSync[$domain->id])) {
+                    $domainsToSync[$domain->id] = $domain;
+                }
+            } catch (\Exception $e) {
+                $errors[] = [
+                    'index' => $index,
+                    'subdomain' => $item['subdomain'] ?? 'N/A',
+                    'error' => $e->getMessage()
+                ];
+            }
+        }
+
+        // 2. Optimized Ingress Sync (Once per domain)
+        foreach ($domainsToSync as $domain) {
+            try {
+                $this->cloudflare->updateTunnelIngress(
+                    Service::where('domain_id', $domain->id)->get(), 
+                    $domain->account_id, 
+                    $domain->tunnel_id
+                );
+            } catch (\Exception $e) {
+                Log::error("Bulk Ingress Sync Error for Domain {$domain->id}: " . $e->getMessage());
+            }
+        }
+
+        if (count($errors) > 0 && count($results) === 0) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
+                'message' => 'Failed to create subdomains',
+                'errors' => $errors
             ], 422);
         }
 
-        try {
-            $domain = Domain::findOrFail($request->domain_id);
-            $port = $request->input('port') ?: $this->generatePort();
-
-            $service = Service::create([
-                'domain_id' => $domain->id,
-                'subdomain' => $request->subdomain,
-                'full_domain' => $request->subdomain . '.' . $domain->domain,
-                'port' => $port,
-                'status' => 'active',
-            ]);
-
-            // === Cloudflare Sync ===
-            // 1. Upsert DNS
-            $this->cloudflare->upsertDnsRecord(
-                $service->subdomain, 
-                $domain->domain, 
-                $domain->zone_id, 
-                $domain->tunnel_id
-            );
-            
-            // 2. Update Tunnel Ingress
-            $this->cloudflare->updateTunnelIngress(
-                Service::where('domain_id', $domain->id)->get(), 
-                $domain->account_id, 
-                $domain->tunnel_id
-            );
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Subdomain created and synced with Cloudflare successfully',
-                'data' => [
-                    'url' => $service->full_domain,
-                    'port' => $service->port,
-                ]
-            ], 201);
-        } catch (\Exception $e) {
-            Log::error("Store Subdomain Error: " . $e->getMessage());
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to create subdomain or sync with Cloudflare',
-                'error' => $e->getMessage(),
-                'hint' => 'Check your Cloudflare Token and Permissions in .env'
-            ], 500);
-        }
+        return response()->json([
+            'status' => 'success',
+            'message' => count($errors) > 0 ? 'Subdomains created with some errors' : 'Subdomains created successfully',
+            'data' => $isBatch ? $results : $results[0],
+            'errors' => count($errors) > 0 ? $errors : null
+        ], 201);
     }
 
     /**
