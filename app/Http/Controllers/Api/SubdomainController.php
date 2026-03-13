@@ -7,10 +7,18 @@ use Illuminate\Http\Request;
 
 use App\Models\Domain;
 use App\Models\Service;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class SubdomainController extends Controller
 {
+    protected $cloudflare;
+
+    public function __construct(\App\Services\CloudflareService $cloudflare)
+    {
+        $this->cloudflare = $cloudflare;
+    }
+
     /**
      * Return list of all subdomains with port and domain.
      */
@@ -77,18 +85,26 @@ class SubdomainController extends Controller
                 'status' => 'active',
             ]);
 
+            // === Cloudflare Sync ===
+            // 1. Upsert DNS
+            $this->cloudflare->upsertDnsRecord($service->subdomain, $domain->domain);
+            
+            // 2. Update Tunnel Ingress
+            $this->cloudflare->updateTunnelIngress(Service::all());
+
             return response()->json([
                 'status' => 'success',
-                'message' => 'Subdomain created successfully',
+                'message' => 'Subdomain created and synced with Cloudflare successfully',
                 'data' => [
                     'url' => $service->full_domain,
                     'port' => $service->port,
                 ]
             ], 201);
         } catch (\Exception $e) {
+            Log::error("Store Subdomain Error: " . $e->getMessage());
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to create subdomain',
+                'message' => 'Failed to create subdomain or sync with Cloudflare',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -99,7 +115,7 @@ class SubdomainController extends Controller
      */
     public function destroy($id)
     {
-        $service = Service::find($id);
+        $service = Service::with('domain')->find($id);
 
         if (!$service) {
             return response()->json([
@@ -109,16 +125,28 @@ class SubdomainController extends Controller
         }
 
         try {
+            $domainName = $service->domain->domain;
+            $subdomain = $service->subdomain;
+
+            // Delete From DB
             $service->delete();
+
+            // === Cloudflare Sync ===
+            // 1. Delete DNS
+            $this->cloudflare->deleteDnsRecord($subdomain, $domainName);
+
+            // 2. Update Tunnel Ingress
+            $this->cloudflare->updateTunnelIngress(Service::all());
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Service deleted successfully'
+                'message' => 'Service deleted and Cloudflare synced successfully'
             ]);
         } catch (\Exception $e) {
+            Log::error("Delete Subdomain Error: " . $e->getMessage());
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to delete service',
+                'message' => 'Failed to delete service or sync with Cloudflare',
                 'error' => $e->getMessage()
             ], 500);
         }
