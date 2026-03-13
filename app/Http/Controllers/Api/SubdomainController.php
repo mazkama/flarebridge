@@ -18,7 +18,7 @@ class SubdomainController extends Controller
     {
         $services = Service::with('domain')->get();
 
-        return response()->json($services->map(function ($service) {
+        $data = $services->map(function ($service) {
             return [
                 'id' => $service->id,
                 'subdomain' => $service->subdomain,
@@ -27,7 +27,13 @@ class SubdomainController extends Controller
                 'status' => $service->status,
                 'domain' => $service->domain->domain,
             ];
-        }));
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Subdomains retrieved successfully',
+            'data' => $data
+        ]);
     }
 
     /**
@@ -52,24 +58,40 @@ class SubdomainController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        $domain = Domain::findOrFail($request->domain_id);
-        $port = $this->generatePort();
+        try {
+            $domain = Domain::findOrFail($request->domain_id);
+            $port = $this->generatePort();
 
-        $service = Service::create([
-            'domain_id' => $domain->id,
-            'subdomain' => $request->subdomain,
-            'full_domain' => $request->subdomain . '.' . $domain->domain,
-            'port' => $port,
-            'status' => 'active',
-        ]);
+            $service = Service::create([
+                'domain_id' => $domain->id,
+                'subdomain' => $request->subdomain,
+                'full_domain' => $request->subdomain . '.' . $domain->domain,
+                'port' => $port,
+                'status' => 'active',
+            ]);
 
-        return response()->json([
-            'url' => $service->full_domain,
-            'port' => $service->port,
-        ], 201);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Subdomain created successfully',
+                'data' => [
+                    'url' => $service->full_domain,
+                    'port' => $service->port,
+                ]
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to create subdomain',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -80,12 +102,26 @@ class SubdomainController extends Controller
         $service = Service::find($id);
 
         if (!$service) {
-            return response()->json(['message' => 'Service not found'], 404);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Service not found'
+            ], 404);
         }
 
-        $service->delete();
+        try {
+            $service->delete();
 
-        return response()->json(['message' => 'Service deleted successfully']);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Service deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to delete service',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
