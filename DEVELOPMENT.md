@@ -35,11 +35,12 @@ Project ini menggunakan **Laravel 10** karena environment saat ini menggunakan *
 
 API ini dirancang untuk berintegrasi dengan **Cloudflare Zero Trust Tunnel**.
 
-### Integrasi Flow:
-1. Seseorang/Sistem call `POST /api/subdomains`.
-2. API mengembalikan nomor `port` unik.
-3. Anda perlu menjalankan instance service baru di server pada `port` tersebut.
-4. Update config Cloudflare Tunnel (`config.yml`) atau via Dashboard Cloudflare untuk mapping subdomain ke `localhost:PORT` yang baru saja dibuat.
+### Integrasi Flow (Otomatis):
+1. Sistem call `POST /api/subdomains`.
+2. API menyimpan mapping ke MySQL.
+3. API otomatis membuat **DNS CNAME Record** di Cloudflare.
+4. API otomatis memperbarui **Cloudflare Tunnel Ingress configuration** (Remote).
+5. Gateway Cloudflare siap mengarahkan traffic ke `localhost:PORT`.
 
 ### Tips Deployment:
 - Gunakan **Process Manager (PM2)** atau **systemd** untuk mengelola lifecycle service yang jalan di port tersebut.
@@ -49,13 +50,11 @@ API ini dirancang untuk berintegrasi dengan **Cloudflare Zero Trust Tunnel**.
 
 ## 🛠️ Rencana Pengembangan (Roadmap)
 
-Berikut ide pengembangan selanjutnya biar makin mantap:
-
 1. **Dashboard UI**: Framework frontend (Vue/React) untuk visualisasi mapping subdomain & port tanpa lewat API manual.
-2. **Cloudflare API Integration**: Otomatis update DNS/Tunnel rules di Cloudflare saat `POST /api/subdomains` dipanggil (menggunakan Cloudflare SDK).
+2. [DONE] **Cloudflare API Integration**: Otomatis update DNS/Tunnel rules.
 3. **Health Check**: Endpoint untuk monitoring apakah service di port tersebut masih hidup atau mati.
-4. **Multi-Domain**: Support untuk mengelola banyak root domain secara dinamis.
-5. **Auth / API Key**: Tambahkan proteksi (Sanctum/Passport) supaya API tidak bisa diakses sembarang orang.
+4. **Auth / API Key**: Tambahkan proteksi (Sanctum/Passport) supaya API tidak bisa diakses sembarang orang.
+5. **Log Monitoring**: Integrasi log Cloudflare ke dashboard lokal.
 
 ---
 
@@ -77,7 +76,11 @@ Berikut ide pengembangan selanjutnya biar makin mantap:
 **Response:**
 ```json
 {
-    "url": "backend-api.example.com",
-    "port": 4567
+    "status": "success",
+    "message": "Subdomain created and synced with Cloudflare successfully",
+    "data": {
+        "url": "backend-api.mazkama.web.id",
+        "port": 4567
+    }
 }
 ```

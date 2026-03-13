@@ -8,10 +8,10 @@ REST API project built with Laravel 10 to manage dynamic subdomain routing for *
 
 ## 🚀 Key Features
 
-- **Unique Port Generation**: Automatically assigns a unique random port (3000-9000) for every new subdomain.
+- **Automated Cloudflare Sync**: Automatically creates/deletes DNS CNAME records and updates Tunnel Ingress rules.
+- **Unique Port Generation**: Automatically assigns a unique random port (3000-9000).
 - **Service Registry**: Keeps track of `subdomain -> port` mappings in a MySQL database.
-- **RESTful API**: Simple endpoints to list, create, and delete service mappings.
-- **Domain Support**: Manage multiple root domains and their associated subdomains.
+- **RESTful API**: Professional JSON responses for listing, creating, and deleting mappings.
 - **Validation**: Ensures no duplicate subdomains per domain and no port conflicts globaly.
 
 ## 🛠️ Tech Stack
@@ -22,7 +22,7 @@ REST API project built with Laravel 10 to manage dynamic subdomain routing for *
 
 ## 🔑 Cloudflare Integration & Tokens
 
-Aplikasi ini bisa dikembangkan lebih lanjut untuk otomatis update DNS/Tunnel di Cloudflare. Untuk itu, bos butuh beberapa token berikut di `.env`:
+Aplikasi ini **otomatis** melakukan sinkronisasi dengan Cloudflare. Pastikan bos mengisi token berikut di `.env`:
 
 1. **Cloudflare API Token**:
    - Ke [Dash Cloudflare - API Tokens](https://dash.cloudflare.com/profile/api-tokens).
@@ -48,11 +48,15 @@ Aplikasi ini bisa dikembangkan lebih lanjut untuk otomatis update DNS/Tunnel di 
 }
 ```
 
-### Example Response
+### Example Response (Standardized)
 ```json
 {
-    "url": "my-cool-app.yourdomain.com",
-    "port": 5432
+    "status": "success",
+    "message": "Subdomain created and synced with Cloudflare successfully",
+    "data": {
+        "url": "my-cool-app.mazkama.web.id",
+        "port": 5432
+    }
 }
 ```
 
