@@ -158,6 +158,11 @@ class SettingController extends Controller
 
     public function validateStep(Request $request)
     {
+        // Guard: prevent use after onboarding unless specifically allowed (but for now it's for onboarding)
+        if (\App\Models\Setting::get('onboarding_completed', false)) {
+            return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 401);
+        }
+
         $step = $request->input('step');
         $data = $request->input('data');
 

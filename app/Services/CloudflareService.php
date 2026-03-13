@@ -146,21 +146,33 @@ class CloudflareService
      */
     public function verifyCredentials($email, $token, $zoneId = null, $accountId = null)
     {
+        Log::info("Cloudflare Verification Attempt", [
+            'email' => $email,
+            'is_token_long' => strlen($token) >= 40,
+            'zone_id' => $zoneId,
+            'account_id' => $accountId
+        ]);
+
         // Detect if Global API Key (needs email) or API Token
-        $isGlobalKey = !empty($email) && strlen($token) < 40; // Scoped tokens are usually longer
+        // If email is provided, we assume it's a Global Key. 
+        // If it's a token, email should be null in the request.
+        $isGlobalKey = !empty($email);
 
         // 1. Verify Connectivity/Token
         if ($isGlobalKey) {
-            // Validate Global API Key by fetching user info
             $tokenResponse = Http::withHeaders([
                 'X-Auth-Email' => $email,
                 'X-Auth-Key' => $token,
             ])->get("{$this->baseUrl}/user");
         } else {
-            // Validate Scoped API Token
             $tokenResponse = Http::withToken($token)->get("{$this->baseUrl}/user/tokens/verify");
         }
         
+        Log::info("Cloudflare Auth Response", [
+            'status' => $tokenResponse->status(),
+            'body' => $tokenResponse->json()
+        ]);
+
         if (!$tokenResponse->successful() || ($isGlobalKey && $tokenResponse->json()['success'] !== true) || (!$isGlobalKey && $tokenResponse->json()['result']['status'] !== 'active')) {
             $errorMsg = $tokenResponse->json()['errors'][0]['message'] ?? 'Invalid Cloudflare API Token or Key.';
             throw new \Exception("Cloudflare validation failed: " . $errorMsg);
@@ -175,6 +187,7 @@ class CloudflareService
             $zoneResponse = $zoneRequest->get("{$this->baseUrl}/zones/{$zoneId}");
 
             if (!$zoneResponse->successful()) {
+                Log::warning("Cloudflare Zone failure", ['body' => $zoneResponse->json()]);
                 throw new \Exception("Invalid Zone ID or insufficient permissions for this domain.");
             }
         }
@@ -188,6 +201,7 @@ class CloudflareService
             $accountResponse = $accountRequest->get("{$this->baseUrl}/accounts/{$accountId}");
 
             if (!$accountResponse->successful()) {
+                Log::warning("Cloudflare Account failure", ['body' => $accountResponse->json()]);
                 throw new \Exception("Invalid Account ID or insufficient permissions.");
             }
         }

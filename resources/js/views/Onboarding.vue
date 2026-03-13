@@ -33,17 +33,33 @@
                     <div>
                         <h2 class="text-xl font-semibold mb-6 flex items-center">
                             Step 1: Cloudflare Credentials
-                            <span class="ml-2 text-xs bg-indigo-500/20 text-indigo-400 px-2 py-1 rounded">Security First</span>
+                            <span class="ml-2 text-xs bg-indigo-500/20 text-indigo-400 px-2 py-1 rounded tracking-widest">SECURE</span>
                         </h2>
                         <div class="space-y-4">
                             <div class="space-y-2">
-                                <label class="text-sm font-medium text-slate-300">Cloudflare Email</label>
-                                <input v-model="form.cloudflare_email" type="email" placeholder="admin@example.com"
+                                <label class="text-sm font-medium text-slate-300 flex items-center">
+                                    Cloudflare Email
+                                    <div class="group relative ml-2">
+                                        <span class="cursor-help text-slate-600 hover:text-indigo-400 text-xs">?</span>
+                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50">
+                                            The email address associated with your Cloudflare account. **Only required for Global API Key.**
+                                        </div>
+                                    </div>
+                                </label>
+                                <input v-model="form.cloudflare_email" type="email" placeholder="e.g. admin@example.com"
                                     class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600">
-                                <p class="text-[10px] text-slate-500 font-medium">ONLY REQUIRED IF USING GLOBAL API KEY. LEAVE BLANK FOR SCOPED TOKENS.</p>
+                                <p class="text-[10px] text-slate-500 font-medium">LEAVE BLANK IF USING SCOPED API TOKEN.</p>
                             </div>
                             <div class="space-y-2">
-                                <label class="text-sm font-medium text-slate-300">Cloudflare API Token / Global Key</label>
+                                <label class="text-sm font-medium text-slate-300 flex items-center">
+                                    Cloudflare API Token / Global Key
+                                    <div class="group relative ml-2">
+                                        <span class="cursor-help text-slate-600 hover:text-indigo-400 text-xs">?</span>
+                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50">
+                                            Found in **Cloudflare Profile > API Tokens**. We recommend using a Scoped Token with 'DNS:Edit' and 'Zones:Read' permissions.
+                                        </div>
+                                    </div>
+                                </label>
                                 <input v-model="form.cloudflare_api_token" type="password" placeholder="••••••••••••••••"
                                     class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
                             </div>
@@ -57,25 +73,57 @@
                         <h2 class="text-xl font-semibold mb-6">Step 2: Primary Domain & Zone</h2>
                         <div class="space-y-4">
                             <div class="space-y-2">
-                                <label class="text-sm font-medium text-slate-300">Domain Name</label>
+                                <label class="text-sm font-medium text-slate-300 flex items-center">
+                                    Domain Name
+                                    <div class="group relative ml-2">
+                                        <span class="cursor-help text-slate-600 hover:text-indigo-400 text-xs">?</span>
+                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50">
+                                            The root domain you want to use (e.g. example.com). Must be managed by this Cloudflare account.
+                                        </div>
+                                    </div>
+                                </label>
                                 <input v-model="domain.domain" type="text" placeholder="e.g. mazkama.web.id"
                                     class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="space-y-2">
-                                    <label class="text-sm font-medium text-slate-300">Zone ID</label>
-                                    <input v-model="domain.zone_id" type="text" placeholder="Cloudflare Zone ID"
+                                    <label class="text-sm font-medium text-slate-300 flex items-center">
+                                        Zone ID
+                                        <div class="group relative ml-2">
+                                            <span class="cursor-help text-slate-600 hover:text-indigo-400 text-xs">?</span>
+                                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50">
+                                                Copy this from the **Domain Overview** sidebar in Cloudflare.
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <input v-model="domain.zone_id" type="text" placeholder="e.g. d41d8cd98f00b204e9800998ecf8427e"
                                         class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-xs">
                                 </div>
                                 <div class="space-y-2">
-                                    <label class="text-sm font-medium text-slate-300">Account ID</label>
-                                    <input v-model="domain.account_id" type="text" placeholder="Cloudflare Account ID"
+                                    <label class="text-sm font-medium text-slate-300 flex items-center">
+                                        Account ID
+                                        <div class="group relative ml-2">
+                                            <span class="cursor-help text-slate-600 hover:text-indigo-400 text-xs">?</span>
+                                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50">
+                                                Copy this from the **Dashboard URL** or bottom of the Domain Overview sidebar.
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <input v-model="domain.account_id" type="text" placeholder="e.g. ac01cd8f88902c..."
                                         class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-xs">
                                 </div>
                             </div>
                             <div class="space-y-2">
-                                <label class="text-sm font-medium text-slate-300">Tunnel ID</label>
-                                <input v-model="domain.tunnel_id" type="text" placeholder="Cloudflare Tunnel ID"
+                                <label class="text-sm font-medium text-slate-300 flex items-center">
+                                    Tunnel ID
+                                    <div class="group relative ml-2">
+                                        <span class="cursor-help text-slate-600 hover:text-indigo-400 text-xs">?</span>
+                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-[10px] rounded shadowing-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-medium leading-relaxed border border-white/5 z-50">
+                                            The ID of the tunnel created in Zero Trust > Networks > Tunnels.
+                                        </div>
+                                    </div>
+                                </label>
+                                <input v-model="domain.tunnel_id" type="text" placeholder="e.g. 1a2b3c4d-5e6f-..."
                                     class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-xs">
                             </div>
                         </div>
@@ -96,6 +144,7 @@
                                 <label class="text-sm font-medium text-slate-300">Admin Email</label>
                                 <input v-model="form.admin_email" type="email" placeholder="admin@example.com"
                                     class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
+                                <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">This will be your login username.</p>
                             </div>
                         </div>
                     </div>
@@ -111,40 +160,43 @@
                             </div>
                             <div class="space-y-3">
                                 <div class="flex items-center justify-between text-sm">
-                                    <span class="text-slate-500">Domain</span>
-                                    <span class="text-white font-bold">{{ domain.domain }}</span>
+                                    <span class="text-slate-500 italic">Target Domain</span>
+                                    <span class="text-white font-black">{{ domain.domain }}</span>
                                 </div>
                                 <div class="flex items-center justify-between text-sm">
-                                    <span class="text-slate-500">Admin</span>
-                                    <span class="text-white font-bold">{{ form.admin_name }}</span>
+                                    <span class="text-slate-500 italic">Admin Name</span>
+                                    <span class="text-white font-black">{{ form.admin_name }}</span>
                                 </div>
                                 <div class="flex items-center justify-between text-sm">
-                                    <span class="text-slate-500">Email</span>
-                                    <span class="text-indigo-400 font-bold font-mono">{{ form.admin_email }}</span>
+                                    <span class="text-slate-500 italic">Login Username</span>
+                                    <span class="text-indigo-400 font-black font-mono">{{ form.admin_email }}</span>
                                 </div>
                             </div>
                         </div>
-                        <p class="text-slate-400 text-sm italic">Click "Complete Setup" to finish the onboarding process.</p>
+                        <p class="text-slate-400 text-sm">Everything looks good! Click the button below to complete setup.</p>
                     </div>
                 </div>
 
                 <!-- Actions -->
                 <div class="mt-12 flex items-center justify-between">
-                    <button v-if="step > 1" @click="step--" 
-                        class="px-6 py-3 font-medium text-slate-400 hover:text-white transition-colors">
+                    <button v-if="step > 1" @click="step--" :disabled="loading"
+                        class="px-6 py-3 font-medium text-slate-400 hover:text-white transition-colors disabled:opacity-20">
                         Back
                     </button>
                     <div v-else></div>
 
                     <button @click="handleNext" :disabled="loading"
-                        class="px-8 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-black rounded-2xl shadow-xl shadow-indigo-500/20 transition-all active:scale-95 disabled:opacity-50 flex items-center">
+                        class="px-8 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-black rounded-2xl shadow-xl shadow-indigo-500/20 transition-all active:scale-95 disabled:opacity-50 flex items-center group">
                         <span v-if="loading" class="mr-3">
                             <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
                         </span>
-                        {{ step === 4 ? 'Complete Setup' : 'Next Step' }}
+                        <span>{{ step === 4 ? 'Complete Setup' : 'Next Step' }}</span>
+                        <svg v-if="!loading" class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -155,19 +207,26 @@
             <div v-for="toast in toasts" :key="toast.id" 
                 class="flex items-center p-4 min-w-[320px] max-w-md rounded-2xl shadow-2xl border backdrop-blur-md transition-all duration-500"
                 :class="{
-                    'bg-slate-900/90 border-red-500/50 text-red-100': toast.type === 'error',
-                    'bg-slate-900/90 border-green-500/50 text-green-100': toast.type === 'success',
+                    'bg-slate-900/95 border-red-500/40 text-red-100 shadow-red-500/10': toast.type === 'error',
+                    'bg-slate-900/95 border-green-500/40 text-green-100 shadow-green-500/10': toast.type === 'success',
                 }">
                 <div class="flex-shrink-0 mr-3">
-                    <svg v-if="toast.type === 'error'" class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                    <svg v-else class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <div v-if="toast.type === 'error'" class="w-8 h-8 bg-red-500/10 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <div v-else class="w-8 h-8 bg-green-500/10 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
                 </div>
-                <div class="flex-grow text-sm font-medium pr-2">{{ toast.message }}</div>
-                <button @click="removeToast(toast.id)" class="text-slate-500 hover:text-white transition-colors">
+                <div class="flex-grow">
+                    <div class="text-xs font-black uppercase tracking-widest mb-0.5 opacity-50">{{ toast.type === 'error' ? 'Validation Error' : 'Success' }}</div>
+                    <div class="text-sm font-medium leading-normal">{{ toast.message }}</div>
+                </div>
+                <button @click="removeToast(toast.id)" class="ml-4 text-slate-500 hover:text-white transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
             </div>
@@ -202,7 +261,7 @@ const domain = reactive({
 const showToast = (message, type = 'error') => {
     const id = Date.now();
     toasts.value.push({ id, message, type });
-    setTimeout(() => removeToast(id), 5000);
+    setTimeout(() => removeToast(id), 6000);
 };
 
 const removeToast = (id) => {
@@ -211,14 +270,15 @@ const removeToast = (id) => {
 
 const handleNext = async () => {
     if (step.value === 1) {
-        if (!form.cloudflare_api_token) return showToast('Please enter your Cloudflare API Token or Global Key.');
+        if (!form.cloudflare_api_token) return showToast('Cloudflare API Token or Global Key is required.');
         await validateStep(1);
     } else if (step.value === 2) {
-        if (!domain.domain || !domain.zone_id || !domain.account_id || !domain.tunnel_id) 
-            return showToast('Complete all domain and tunnel details.');
+        if (!domain.domain) return showToast('Domain name is missing.');
+        if (!domain.zone_id || !domain.account_id || !domain.tunnel_id) 
+            return showToast('Zone, Account, and Tunnel IDs are all required for syncing.');
         await validateStep(2);
     } else if (step.value === 3) {
-        if (!form.admin_name || !form.admin_email) return showToast('Please enter admin name and email.');
+        if (!form.admin_name || !form.admin_email) return showToast('Admin contact details are required.');
         step.value++;
     } else {
         finishOnboarding();
@@ -238,7 +298,7 @@ const validateStep = async (stepNumber) => {
         });
         step.value++;
     } catch (error) {
-        const msg = error.response?.data?.message || 'Verification failed. Please check your credentials.';
+        const msg = error.response?.data?.message || 'We could not verify your Cloudflare credentials. Please check for typos.';
         showToast(msg, 'error');
     } finally {
         loading.value = false;
@@ -256,13 +316,13 @@ const finishOnboarding = async () => {
         const { data } = await axios.post('/api/setup', payload);
 
         if (data.status === 'success') {
-            showToast('Setup completed! Welcome aboard.', 'success');
+            showToast('Handshake successful! Welcome to FlareBridge.', 'success');
             localStorage.setItem('flare_token', data.data.token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${data.data.token}`;
-            setTimeout(() => router.push('/'), 1000);
+            setTimeout(() => router.push('/'), 1200);
         }
     } catch (error) {
-        showToast('Final setup error: ' + (error.response?.data?.message || error.message));
+        showToast(error.response?.data?.message || 'Final setup encountered an error.');
     } finally {
         loading.value = false;
     }
@@ -275,14 +335,14 @@ const finishOnboarding = async () => {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(15px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 .toast-enter-active, .toast-leave-active {
-    transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
-.toast-enter-from { opacity: 0; transform: translateX(50px) scale(0.9); }
+.toast-enter-from { opacity: 0; transform: translateX(100px) scale(0.9); }
 .toast-enter-to { opacity: 1; transform: translateX(0) scale(1); }
 .toast-leave-from { opacity: 1; transform: scale(1); }
 .toast-leave-to { opacity: 0; transform: scale(0.8) translateY(20px); }

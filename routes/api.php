@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 
 Route::get('/onboarding-check', [SettingController::class, 'checkOnboarding']);
 Route::post('/setup', [SettingController::class, 'setup']);
+Route::post('/v1/system/validate-step', [SettingController::class, 'validateStep']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -41,7 +42,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     // System Operations
     Route::post('/system/reset', [SettingController::class, 'resetSystem']);
-    Route::post('/system/validate-step', [SettingController::class, 'validateStep']);
     Route::get('/system/token', [SettingController::class, 'viewToken']);
     Route::post('/system/token/renew', [SettingController::class, 'renewToken']);
 });
