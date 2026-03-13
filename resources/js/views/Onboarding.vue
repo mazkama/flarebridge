@@ -147,13 +147,26 @@
                             <div class="space-y-2">
                                 <label class="text-sm font-medium text-slate-300">{{ t('onboarding.admin_name') }}</label>
                                 <input v-model="form.admin_name" type="text" :placeholder="t('onboarding.admin_name_placeholder')"
-                                    class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
+                                    class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium">
                             </div>
                             <div class="space-y-2">
                                 <label class="text-sm font-medium text-slate-300">{{ t('onboarding.admin_email') }}</label>
                                 <input v-model="form.admin_email" type="email" :placeholder="t('onboarding.admin_email_placeholder')"
-                                    class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
+                                    class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium">
                                 <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{{ t('onboarding.admin_email_hint') }}</p>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium text-slate-300 flex items-center">
+                                    {{ t('onboarding.admin_password_label') }}
+                                    <div class="group relative ml-2">
+                                        <span class="cursor-help text-slate-600 hover:text-indigo-400 text-xs">?</span>
+                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-slate-800 text-[10px] rounded shadowing-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none normal-case font-medium leading-relaxed border border-white/5 z-50">
+                                            {{ t('onboarding.admin_password_hint') }}
+                                        </div>
+                                    </div>
+                                </label>
+                                <input v-model="form.admin_password" type="password" :placeholder="t('onboarding.admin_password_placeholder')"
+                                    class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-sans">
                             </div>
                         </div>
                     </div>
@@ -260,6 +273,7 @@ const form = reactive({
     cloudflare_api_token: '',
     admin_email: '',
     admin_name: '',
+    admin_password: '',
 });
 
 const domain = reactive({
@@ -289,7 +303,7 @@ const handleNext = async () => {
             return showToast(t('onboarding.ids_required'));
         await validateStep(2);
     } else if (step.value === 3) {
-        if (!form.admin_name || !form.admin_email) return showToast(t('onboarding.details_required'));
+        if (!form.admin_name || !form.admin_email || !form.admin_password) return showToast(t('onboarding.details_required'));
         step.value++;
     } else {
         finishOnboarding();
