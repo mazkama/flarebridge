@@ -41,6 +41,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     // System Operations
     Route::post('/system/reset', [SettingController::class, 'resetSystem']);
+    Route::post('/system/validate-step', [SettingController::class, 'validateStep']);
     Route::get('/system/token', [SettingController::class, 'viewToken']);
     Route::post('/system/token/renew', [SettingController::class, 'renewToken']);
 });

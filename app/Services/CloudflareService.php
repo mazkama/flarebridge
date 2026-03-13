@@ -146,31 +146,46 @@ class CloudflareService
      */
     public function verifyCredentials($email, $token, $zoneId = null, $accountId = null)
     {
-        // 1. Verify Token
-        $tokenResponse = Http::withToken($token)->get("{$this->baseUrl}/user/tokens/verify");
+        // Detect if Global API Key (needs email) or API Token
+        $isGlobalKey = !empty($email) && strlen($token) < 40; // Scoped tokens are usually longer
+
+        // 1. Verify Connectivity/Token
+        if ($isGlobalKey) {
+            // Validate Global API Key by fetching user info
+            $tokenResponse = Http::withHeaders([
+                'X-Auth-Email' => $email,
+                'X-Auth-Key' => $token,
+            ])->get("{$this->baseUrl}/user");
+        } else {
+            // Validate Scoped API Token
+            $tokenResponse = Http::withToken($token)->get("{$this->baseUrl}/user/tokens/verify");
+        }
         
-        if (!$tokenResponse->successful() || $tokenResponse->json()['result']['status'] !== 'active') {
-            throw new \Exception("Invalid Cloudflare API Token or Token is not active.");
+        if (!$tokenResponse->successful() || ($isGlobalKey && $tokenResponse->json()['success'] !== true) || (!$isGlobalKey && $tokenResponse->json()['result']['status'] !== 'active')) {
+            $errorMsg = $tokenResponse->json()['errors'][0]['message'] ?? 'Invalid Cloudflare API Token or Key.';
+            throw new \Exception("Cloudflare validation failed: " . $errorMsg);
         }
 
         // 2. Verify Zone (optional)
         if ($zoneId) {
-            $zoneResponse = Http::withHeaders([
-                'X-Auth-Email' => $email,
-                'X-Auth-Key' => $token,
-            ])->get("{$this->baseUrl}/zones/{$zoneId}");
+            $zoneRequest = $isGlobalKey 
+                ? Http::withHeaders(['X-Auth-Email' => $email, 'X-Auth-Key' => $token])
+                : Http::withToken($token);
+
+            $zoneResponse = $zoneRequest->get("{$this->baseUrl}/zones/{$zoneId}");
 
             if (!$zoneResponse->successful()) {
-                throw new \Exception("Invalid Zone ID or insufficient permissions.");
+                throw new \Exception("Invalid Zone ID or insufficient permissions for this domain.");
             }
         }
 
         // 3. Verify Account (optional)
         if ($accountId) {
-            $accountResponse = Http::withHeaders([
-                'X-Auth-Email' => $email,
-                'X-Auth-Key' => $token,
-            ])->get("{$this->baseUrl}/accounts/{$accountId}");
+            $accountRequest = $isGlobalKey 
+                ? Http::withHeaders(['X-Auth-Email' => $email, 'X-Auth-Key' => $token])
+                : Http::withToken($token);
+
+            $accountResponse = $accountRequest->get("{$this->baseUrl}/accounts/{$accountId}");
 
             if (!$accountResponse->successful()) {
                 throw new \Exception("Invalid Account ID or insufficient permissions.");

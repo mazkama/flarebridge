@@ -156,6 +156,37 @@ class SettingController extends Controller
         ]);
     }
 
+    public function validateStep(Request $request)
+    {
+        $step = $request->input('step');
+        $data = $request->input('data');
+
+        try {
+            if ($step == 1) {
+                // Validate Credentials only
+                $this->cloudflare->verifyCredentials(
+                    $data['cloudflare_email'] ?? null,
+                    $data['cloudflare_api_token']
+                );
+            } elseif ($step == 2) {
+                // Validate Domain, Zone, Account
+                $this->cloudflare->verifyCredentials(
+                    $data['cloudflare_email'] ?? null,
+                    $data['cloudflare_api_token'],
+                    $data['domain']['zone_id'] ?? null,
+                    $data['domain']['account_id'] ?? null
+                );
+            }
+
+            return response()->json(['status' => 'success']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 422);
+        }
+    }
+
     /**
      * Renew API token.
      */
