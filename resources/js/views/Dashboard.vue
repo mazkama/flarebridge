@@ -173,7 +173,7 @@
 
         <!-- Footer -->
         <footer class="py-10 text-center border-t border-white/5 text-slate-600 text-sm">
-            FlareBridge &copy; 2026 - Powered by Laravel & Vue
+            FlareBridge &copy; 2026 - {{ t('dashboard.footer_powered') }}
         </footer>
 
         <!-- Modal: Add/Edit Subdomain -->
@@ -195,7 +195,7 @@
                             </div>
                         </label>
                         <div class="flex items-center">
-                            <input v-model="subForm.subdomain" type="text" placeholder="e.g. myapp"
+                            <input v-model="subForm.subdomain" type="text" :placeholder="t('dashboard.subdomain_placeholder')"
                                 class="flex-grow bg-slate-800 border-y border-l border-white/10 rounded-l-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all font-medium text-white">
                             <span class="bg-slate-800 border border-white/10 rounded-r-xl px-4 py-3 text-slate-500 font-medium whitespace-nowrap text-sm">.{{ selectedDomain?.domain }}</span>
                         </div>
@@ -223,7 +223,7 @@
                             </label>
                         </div>
                         <div v-if="subForm.customPort" class="animate-fade-in">
-                            <input v-model="subForm.port" type="number" placeholder="e.g. 8080"
+                            <input v-model="subForm.port" type="number" :placeholder="t('dashboard.port_placeholder')"
                                 class="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all font-mono text-white">
                             <p class="text-[10px] text-slate-500 mt-1">{{ t('dashboard.port_auto_hint') }}</p>
                         </div>
@@ -264,7 +264,7 @@
                                 </div>
                             </div>
                         </label>
-                        <input v-model="domainForm.domain" type="text" placeholder="e.g. example.com"
+                        <input v-model="domainForm.domain" type="text" :placeholder="t('onboarding.domain_placeholder')"
                             class="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
@@ -278,7 +278,7 @@
                                     </div>
                                 </div>
                             </label>
-                            <input v-model="domainForm.zone_id" type="text" placeholder="Cloudflare Zone ID"
+                            <input v-model="domainForm.zone_id" type="text" :placeholder="t('onboarding.zone_label')"
                                 class="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all text-sm">
                         </div>
                         <div class="space-y-2">
@@ -291,7 +291,7 @@
                                     </div>
                                 </div>
                             </label>
-                            <input v-model="domainForm.account_id" type="text" placeholder="Cloudflare Account ID"
+                            <input v-model="domainForm.account_id" type="text" :placeholder="t('onboarding.account_label')"
                                 class="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all text-sm">
                         </div>
                     </div>
@@ -305,7 +305,7 @@
                                 </div>
                             </div>
                         </label>
-                        <input v-model="domainForm.tunnel_id" type="text" placeholder="e.g. 1234abcd-..."
+                        <input v-model="domainForm.tunnel_id" type="text" :placeholder="t('onboarding.tunnel_label')"
                             class="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all">
                     </div>
                 </div>
@@ -556,7 +556,7 @@ const setMode = async (mode) => {
             settings: { app_mode: mode }
         });
     } catch (error) {
-        console.error('Failed to save mode preference');
+        console.error(t('dashboard.mode_save_error'));
     }
 };
 

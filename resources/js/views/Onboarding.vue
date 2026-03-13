@@ -55,7 +55,7 @@
                                         </div>
                                     </div>
                                 </label>
-                                <input v-model="form.cloudflare_email" type="email" placeholder="e.g. admin@example.com"
+                                <input v-model="form.cloudflare_email" type="email" :placeholder="t('onboarding.email_placeholder_hint')"
                                     class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600">
                                 <p class="text-[10px] text-slate-500 font-medium uppercase">{{ t('onboarding.email_placeholder_hint') }}</p>
                             </div>
@@ -69,7 +69,7 @@
                                         </div>
                                     </div>
                                 </label>
-                                <input v-model="form.cloudflare_api_token" type="password" placeholder="••••••••••••••••"
+                                <input v-model="form.cloudflare_api_token" type="password" :placeholder="t('onboarding.token_placeholder')"
                                     class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
                             </div>
                         </div>
@@ -91,7 +91,7 @@
                                         </div>
                                     </div>
                                 </label>
-                                <input v-model="domain.domain" type="text" placeholder="e.g. mazkama.web.id"
+                                <input v-model="domain.domain" type="text" :placeholder="t('onboarding.domain_placeholder')"
                                     class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -105,7 +105,7 @@
                                             </div>
                                         </div>
                                     </label>
-                                    <input v-model="domain.zone_id" type="text" placeholder="e.g. d41d8cd98f00b204e9..."
+                                    <input v-model="domain.zone_id" type="text" :placeholder="t('onboarding.zone_placeholder')"
                                         class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-xs">
                                 </div>
                                 <div class="space-y-2">
@@ -118,7 +118,7 @@
                                             </div>
                                         </div>
                                     </label>
-                                    <input v-model="domain.account_id" type="text" placeholder="e.g. ac01cd8f88902c..."
+                                    <input v-model="domain.account_id" type="text" :placeholder="t('onboarding.account_placeholder')"
                                         class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-xs">
                                 </div>
                             </div>
@@ -132,7 +132,7 @@
                                         </div>
                                     </div>
                                 </label>
-                                <input v-model="domain.tunnel_id" type="text" placeholder="e.g. 1a2b3c4d-5e6f-..."
+                                <input v-model="domain.tunnel_id" type="text" :placeholder="t('onboarding.tunnel_placeholder')"
                                     class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-xs">
                             </div>
                         </div>
@@ -146,12 +146,12 @@
                         <div class="space-y-4">
                             <div class="space-y-2">
                                 <label class="text-sm font-medium text-slate-300">{{ t('onboarding.admin_name') }}</label>
-                                <input v-model="form.admin_name" type="text" placeholder="e.g. John Doe"
+                                <input v-model="form.admin_name" type="text" :placeholder="t('onboarding.admin_name_placeholder')"
                                     class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
                             </div>
                             <div class="space-y-2">
                                 <label class="text-sm font-medium text-slate-300">{{ t('onboarding.admin_email') }}</label>
-                                <input v-model="form.admin_email" type="email" placeholder="admin@example.com"
+                                <input v-model="form.admin_email" type="email" :placeholder="t('onboarding.admin_email_placeholder')"
                                     class="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
                                 <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{{ t('onboarding.admin_email_hint') }}</p>
                             </div>
@@ -232,7 +232,7 @@
                     </div>
                 </div>
                 <div class="flex-grow">
-                    <div class="text-xs font-black uppercase tracking-widest mb-0.5 opacity-50">{{ toast.type === 'error' ? 'Validation Error' : 'Success' }}</div>
+                    <div class="text-xs font-black uppercase tracking-widest mb-0.5 opacity-50">{{ toast.type === 'error' ? t('onboarding.validation_error_title') : t('common.success') }}</div>
                     <div class="text-sm font-medium leading-normal">{{ toast.message }}</div>
                 </div>
                 <button @click="removeToast(toast.id)" class="ml-4 text-slate-500 hover:text-white transition-colors">
@@ -281,15 +281,15 @@ const removeToast = (id) => {
 
 const handleNext = async () => {
     if (step.value === 1) {
-        if (!form.cloudflare_api_token) return showToast(t('onboarding.token_label') + ' is required.');
+        if (!form.cloudflare_api_token) return showToast(t('onboarding.token_required'));
         await validateStep(1);
     } else if (step.value === 2) {
-        if (!domain.domain) return showToast(t('onboarding.domain_label') + ' is missing.');
+        if (!domain.domain) return showToast(t('onboarding.domain_required'));
         if (!domain.zone_id || !domain.account_id || !domain.tunnel_id) 
-            return showToast('Zone, Account, and Tunnel IDs are all required for syncing.');
+            return showToast(t('onboarding.ids_required'));
         await validateStep(2);
     } else if (step.value === 3) {
-        if (!form.admin_name || !form.admin_email) return showToast(t('onboarding.step3_title') + ' details are required.');
+        if (!form.admin_name || !form.admin_email) return showToast(t('onboarding.details_required'));
         step.value++;
     } else {
         finishOnboarding();
@@ -333,7 +333,7 @@ const finishOnboarding = async () => {
             setTimeout(() => router.push('/'), 1200);
         }
     } catch (error) {
-        showToast(error.response?.data?.message || 'Final setup encountered an error.');
+        showToast(error.response?.data?.message || t('onboarding.setup_error'));
     } finally {
         loading.value = false;
     }

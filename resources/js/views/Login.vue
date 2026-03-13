@@ -21,7 +21,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                 </div>
-                <h1 class="text-2xl md:text-3xl font-black tracking-tight">FlareBridge <span class="text-indigo-500">Login</span></h1>
+                <h1 class="text-2xl md:text-3xl font-black tracking-tight">FlareBridge <span class="text-indigo-500">{{ t('login.brand_login') }}</span></h1>
                 <p class="text-slate-500 mt-2 text-sm md:text-base">{{ t('login.subtitle') }}</p>
             </div>
 
@@ -37,7 +37,7 @@
                                 </div>
                             </div>
                         </label>
-                        <input v-model="form.email" type="email" required placeholder="admin@example.com"
+                        <input v-model="form.email" type="email" required :placeholder="t('login.email_placeholder')"
                             class="w-full bg-slate-900 border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-medium">
                     </div>
 
@@ -51,7 +51,7 @@
                                 </div>
                             </div>
                         </label>
-                        <input v-model="form.password" type="password" required placeholder="••••••••"
+                        <input v-model="form.password" type="password" required :placeholder="t('login.password_placeholder')"
                             class="w-full bg-slate-900 border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-medium">
                     </div>
 
