@@ -4,12 +4,29 @@
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.md)
 
-REST API project built with Laravel 10 to manage dynamic subdomain routing for **Cloudflare Zero Trust Tunnel**. FlareBridge acts as a smart registry for mapping subdomains to unique server ports, simplifying port-based routing for tunneling services.
+REST API project built with Laravel 10 to manage dynamic subdomain routing for **Cloudflare Zero Trust Tunnel**. FlareBridge acts as a smart registry
+
+## 🔒 API Security
+
+FlareBridge is protected by **Laravel Sanctum**. To use the API, you must provide a Bearer Token in the HTTP headers.
+
+### 1. Generating a Token
+Run the following artisan command to generate a token for your admin user:
+```bash
+php artisan flare:generate-token admin@example.com
+```
+
+### 2. Using the Token
+Add the following header to all API requests:
+`Authorization: Bearer YOUR_GENERATED_TOKEN`
 
 ## 🚀 Key Features
 
-- **Automated Cloudflare Sync**: Automatically creates/deletes DNS CNAME records and updates Tunnel Ingress rules.
-- **Unique Port Generation**: Automatically assigns a unique random port (3000-9000).
+-   **Multi-Domain Architecture**: Manage multiple root domains, Cloudflare Zones, and Tunnels from a single instance.
+-   **Automated DNS Sync**: Automatically creates/updates CNAME records for subdomains.
+-   **Tunnel Ingress Automation**: Updates Cloudflare Tunnel ingress rules instantly upon subdomain changes.
+-   **Professional Versioning**: Clean API structure using `/api/v1/`.
+-   **Secure Authentication**: Token-based security powered by Laravel Sanctum.
 - **Service Registry**: Keeps track of `subdomain -> port` mappings in a MySQL database.
 - **RESTful API**: Professional JSON responses for listing, creating, and deleting mappings.
 - **Validation**: Ensures no duplicate subdomains per domain and no port conflicts globaly.

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SubdomainController;
 use App\Http\Controllers\Api\DomainController;
+use App\Http\Controllers\Api\SettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,11 +17,18 @@ use App\Http\Controllers\Api\DomainController;
 |
 */
 
+Route::get('/onboarding-check', [SettingController::class, 'checkOnboarding']);
+Route::post('/setup', [SettingController::class, 'setup']);
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
 Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+    // Settings Management
+    Route::get('/settings', [SettingController::class, 'index']);
+    Route::post('/settings', [SettingController::class, 'store']);
+
     // Domain Management
     Route::apiResource('domains', DomainController::class);
 

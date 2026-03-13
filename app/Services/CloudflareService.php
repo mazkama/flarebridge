@@ -13,8 +13,8 @@ class CloudflareService
 
     public function __construct()
     {
-        $this->apiToken = env('CLOUDFLARE_API_TOKEN');
-        $this->email = env('CLOUDFLARE_EMAIL');
+        $this->apiToken = \App\Models\Setting::get('cloudflare_api_token', env('CLOUDFLARE_API_TOKEN'));
+        $this->email = \App\Models\Setting::get('cloudflare_email', env('CLOUDFLARE_EMAIL'));
     }
 
     /**
