@@ -6,14 +6,14 @@
 
         <div class="w-full max-w-md relative z-10">
             <!-- Brand -->
-            <div class="flex flex-col items-center mb-10">
-                <div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-indigo-500/40 mb-4 animate-bounce-slow">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex flex-col items-center mb-8 md:mb-10">
+                <div class="w-12 h-12 md:w-16 md:h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-indigo-500/40 mb-4 animate-bounce-slow">
+                    <svg class="w-8 h-8 md:w-10 md:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                 </div>
-                <h1 class="text-3xl font-black tracking-tight">FlareBridge <span class="text-indigo-500">Login</span></h1>
-                <p class="text-slate-500 mt-2">Manage your Cloudflare Tunnel registry.</p>
+                <h1 class="text-2xl md:text-3xl font-black tracking-tight">FlareBridge <span class="text-indigo-500">Login</span></h1>
+                <p class="text-slate-500 mt-2 text-sm md:text-base">Manage your Cloudflare Tunnel registry.</p>
             </div>
 
             <div class="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl">

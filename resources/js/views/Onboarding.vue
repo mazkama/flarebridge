@@ -4,24 +4,24 @@
         <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/20 blur-[120px] rounded-full"></div>
         <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/20 blur-[120px] rounded-full"></div>
 
-        <div class="w-full max-w-2xl bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden relative z-10 transition-all">
-            <div class="p-8 md:p-12">
+        <div class="w-full max-w-2xl bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden relative z-10 transition-all mx-auto">
+            <div class="p-6 md:p-12">
                 <!-- Header -->
-                <div class="text-center mb-10">
-                    <div class="inline-block p-4 bg-indigo-500/10 rounded-2xl mb-4">
-                        <svg class="w-12 h-12 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="text-center mb-8 md:mb-10">
+                    <div class="inline-block p-3 md:p-4 bg-indigo-500/10 rounded-2xl mb-4">
+                        <svg class="w-10 h-10 md:w-12 md:h-12 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                     </div>
-                    <h1 class="text-3xl font-bold tracking-tight mb-2">Welcome to FlareBridge</h1>
-                    <p class="text-slate-400">Let's get your professional subdomain api ready in a few steps.</p>
+                    <h1 class="text-2xl md:text-3xl font-bold tracking-tight mb-2">Welcome to FlareBridge</h1>
+                    <p class="text-slate-400 text-sm md:text-base">Let's get your professional subdomain api ready in a few steps.</p>
                 </div>
 
                 <!-- Step Indicator -->
-                <div class="flex justify-center mb-10">
-                    <div class="flex items-center space-x-4">
+                <div class="flex justify-center mb-8 md:mb-10">
+                    <div class="flex items-center space-x-2 md:space-x-4">
                         <div v-for="i in 4" :key="i" 
-                            class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300"
+                            class="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-bold transition-all duration-300"
                             :class="step >= i ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'bg-slate-800 text-slate-500 border border-white/5'">
                             {{ i }}
                         </div>

@@ -63,6 +63,17 @@ class SubdomainController extends Controller
                     }
                 },
             ],
+            'port' => [
+                'nullable',
+                'numeric',
+                'min:1',
+                'max:65535',
+                function ($attribute, $value, $fail) {
+                    if ($value && Service::where('port', $value)->exists()) {
+                        $fail('The port ' . $value . ' is already in use by another service.');
+                    }
+                }
+            ]
         ]);
 
         if ($validator->fails()) {
@@ -75,7 +86,7 @@ class SubdomainController extends Controller
 
         try {
             $domain = Domain::findOrFail($request->domain_id);
-            $port = $this->generatePort();
+            $port = $request->input('port') ?: $this->generatePort();
 
             $service = Service::create([
                 'domain_id' => $domain->id,
@@ -148,6 +159,17 @@ class SubdomainController extends Controller
                     }
                 },
             ],
+            'port' => [
+                'nullable',
+                'numeric',
+                'min:1',
+                'max:65535',
+                function ($attribute, $value, $fail) use ($service) {
+                    if ($value && Service::where('port', $value)->where('id', '!=', $service->id)->exists()) {
+                        $fail('The port ' . $value . ' is already in use by another service.');
+                    }
+                }
+            ]
         ]);
 
         if ($validator->fails()) {
@@ -166,6 +188,7 @@ class SubdomainController extends Controller
             $service->update([
                 'subdomain' => $request->subdomain,
                 'full_domain' => $request->subdomain . '.' . $domain->domain,
+                'port' => $request->input('port') ?: $service->port,
             ]);
 
             // === Cloudflare Sync ===

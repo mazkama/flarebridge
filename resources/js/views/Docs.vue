@@ -70,24 +70,50 @@
 
         <!-- Endpoints Section -->
         <section class="space-y-8">
-            <h2 class="text-2xl font-bold border-b border-white/5 pb-2">Primary Endpoints</h2>
+            <h2 class="text-2xl font-bold border-b border-white/5 pb-2">API Reference</h2>
             
-            <div class="grid grid-cols-1 gap-4">
-                <EndpointRow method="GET" path="/domains" desc="List all managed root domains." />
-                <EndpointRow method="POST" path="/domains" desc="Register a new Cloudflare Domain (Zone)." />
-                <EndpointRow method="GET" path="/subdomains" desc="Retrieve all active subdomain mappings." />
-                <EndpointRow method="POST" path="/subdomains" desc="Create a new mapping and sync to Cloudflare." json='{ "domain_id": 1, "subdomain": "shop" }' />
-                <EndpointRow method="PUT" path="/subdomains/{id}" desc="Update an existing mapping subdomain." json='{ "subdomain": "store" }' />
-                <EndpointRow method="DELETE" path="/subdomains/{id}" desc="Remove mapping and delete DNS record." />
+            <div class="space-y-10">
+                <!-- Domains -->
+                <div>
+                    <h3 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-[0.2em]">Domain Management</h3>
+                    <div class="grid grid-cols-1 gap-4">
+                        <EndpointRow method="GET" path="/domains" desc="List all managed root domains." />
+                        <EndpointRow method="POST" path="/domains" desc="Register a new Cloudflare Domain (Zone)." json='{ "domain": "example.com", "zone_id": "...", "account_id": "...", "tunnel_id": "..." }' />
+                        <EndpointRow method="PUT" path="/domains/{id}" desc="Update domain configuration." json='{ "domain": "new.com", "zone_id": "..." }' />
+                        <EndpointRow method="DELETE" path="/domains/{id}" desc="Remove domain and its settings." />
+                    </div>
+                </div>
+
+                <!-- Subdomains -->
+                <div>
+                    <h3 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-[0.2em]">Subdomain Mappings</h3>
+                    <div class="grid grid-cols-1 gap-4">
+                        <EndpointRow method="GET" path="/subdomains" desc="Retrieve all active subdomain mappings." />
+                        <EndpointRow method="POST" path="/subdomains" desc="Create a new mapping (Tunnel Ingress) and DNS record." json='{ "domain_id": 1, "subdomain": "shop", "port": 8080 }' />
+                        <EndpointRow method="PUT" path="/subdomains/{id}" desc="Update mapping subdomain or port." json='{ "subdomain": "store", "port": 9000 }' />
+                        <EndpointRow method="DELETE" path="/subdomains/{id}" desc="Remove mapping and sync with Cloudflare." />
+                    </div>
+                </div>
+
+                <!-- System -->
+                <div>
+                    <h3 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-[0.2em]">System Operations</h3>
+                    <div class="grid grid-cols-1 gap-4">
+                        <EndpointRow method="POST" path="/system/token/renew" desc="Generate a new API token for the current user." />
+                        <EndpointRow method="POST" path="/system/reset" desc="WIPE all data and start onboarding (DANGER)." />
+                        <EndpointRow method="POST" path="/settings" desc="Save app-wide settings (e.g. app_mode)." json='{ "settings": { "app_mode": "dashboard" } }' />
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- Examples -->
         <section class="bg-indigo-600/5 border border-indigo-500/10 p-8 rounded-3xl">
-            <h2 class="text-xl font-bold mb-4">Pro Tip: Random Ports</h2>
+            <h2 class="text-xl font-bold mb-4">Pro Tip: Custom Port Control</h2>
             <p class="text-slate-400 text-sm leading-relaxed font-medium">
-                FlareBridge automatically generates a unique random port (3000-9000) for every new subdomain created. 
-                This ensures no port conflicts on your host machine while being accessible via the public Cloudflare Tunnel.
+                By default, FlareBridge generates a unique random port (3000-9000). 
+                However, you can specify your own <code class="text-indigo-400">port</code> in the payload. 
+                FlareBridge will validate that the port is not already in use by another tunnel mapping before saving.
             </p>
         </section>
     </div>

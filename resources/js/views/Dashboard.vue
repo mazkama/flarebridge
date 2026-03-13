@@ -24,8 +24,14 @@
                 </button>
             </div>
 
-            <div class="flex items-center space-x-4">
-                <div v-if="user" class="hidden md:flex flex-col items-end mr-2">
+            <div class="flex items-center space-x-2">
+                <button @click="showMobileMenu = !showMobileMenu" class="lg:hidden p-2 text-slate-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path v-if="!showMobileMenu" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <div v-if="user" class="hidden sm:flex flex-col items-end mr-2">
                     <span class="text-sm font-bold">{{ user.name }}</span>
                     <span class="text-xs text-slate-500">{{ user.email }}</span>
                 </div>
@@ -46,18 +52,21 @@
                 <div v-else key="dashboard" class="max-w-7xl mx-auto py-12 px-6">
                     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
                         <!-- Sidebar: Domains -->
-                        <div class="lg:col-span-1 space-y-6">
-                            <h2 class="text-xl font-bold">Domains</h2>
+                        <div class="lg:col-span-1 space-y-6 lg:block" :class="showMobileMenu ? 'block' : 'hidden'">
+                            <div class="flex items-center justify-between">
+                                <h2 class="text-xl font-bold">Domains</h2>
+                                <button @click="showAddDomain = true" class="lg:hidden text-indigo-400 text-sm font-bold">+ New</button>
+                            </div>
                             <div class="space-y-3">
                                 <div v-for="domain in domains" :key="domain.id" 
                                     class="flex items-center justify-between p-4 bg-slate-800/30 rounded-xl border border-white/5 hover:border-indigo-500/30 transition-all cursor-pointer group"
                                     :class="{'border-indigo-500 bg-indigo-500/10': selectedDomain?.id === domain.id}"
-                                    @click="selectDomain(domain)">
+                                    @click="selectDomain(domain); showMobileMenu = false">
                                     <div class="flex items-center space-x-3 overflow-hidden">
                                         <div class="w-2 h-2 rounded-full flex-shrink-0" :class="selectedDomain?.id === domain.id ? 'bg-indigo-400' : 'bg-slate-600'"></div>
                                         <span class="font-medium truncate">{{ domain.domain }}</span>
                                     </div>
-                                    <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div class="flex items-center space-x-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                                         <button @click.stop="editDomain(domain)" class="p-1 text-slate-500 hover:text-indigo-400">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -71,7 +80,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <button @click="showAddDomain = true" class="w-full py-3 border border-dashed border-white/10 rounded-xl text-slate-500 hover:text-indigo-400 hover:border-indigo-500/40 transition-all text-sm font-medium">
+                            <button @click="showAddDomain = true" class="hidden lg:block w-full py-3 border border-dashed border-white/10 rounded-xl text-slate-500 hover:text-indigo-400 hover:border-indigo-500/40 transition-all text-sm font-medium">
                                 + Add New Domain
                             </button>
 
@@ -101,8 +110,8 @@
                                     </button>
                                 </div>
 
-                                <div class="bg-slate-800/20 border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
-                                    <table class="w-full text-left">
+                                <div class="bg-slate-800/20 border border-white/5 rounded-2xl overflow-x-auto shadow-2xl">
+                                    <table class="w-full text-left min-w-[600px]">
                                         <thead>
                                             <tr class="bg-slate-800/50 text-slate-400 text-xs font-bold uppercase tracking-wider">
                                                 <th class="px-6 py-4">Subdomain</th>
@@ -117,7 +126,7 @@
                                                 <td class="px-6 py-4">
                                                     <span class="px-2 py-1 bg-slate-800 rounded text-xs font-mono">{{ sub.port }}</span>
                                                 </td>
-                                                <td class="px-6 py-4 text-slate-400 text-sm truncate max-w-xs">
+                                                <td class="px-6 py-4 text-slate-400 text-sm truncate max-w-[150px] sm:max-w-xs">
                                                     https://{{ sub.subdomain }}.{{ selectedDomain.domain }}
                                                 </td>
                                                 <td class="px-6 py-4 text-right flex items-center justify-end space-x-2">
@@ -161,30 +170,71 @@
         <!-- Modal: Add/Edit Subdomain -->
         <div v-if="showAddSubdomain || editingSub" class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-sm">
             <div class="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl p-8 shadow-2xl">
-                <h3 class="text-xl font-bold mb-6">{{ editingSub ? 'Edit Subdomain' : 'Create New Subdomain' }}</h3>
-                <div class="space-y-4 mb-8">
+                <h3 class="text-xl font-bold mb-6 flex items-center justify-between">
+                    {{ editingSub ? 'Edit Subdomain' : 'Create New Subdomain' }}
+                    <span v-if="editingSub" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-1 rounded">ID: {{ subForm.id }}</span>
+                </h3>
+                <div class="space-y-5 mb-8">
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
                             Subdomain Prefix
                             <div class="group relative ml-2">
                                 <span class="cursor-help text-slate-600 hover:text-indigo-400">?</span>
                                 <div class="absolute bottom-full left-0 mb-2 w-48 p-2 bg-slate-800 text-[10px] rounded shadowing-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                                    The name of your subdomain (e.g. 'blog' for blog.example.com)
+                                    The name of your subdomain (e.g. 'blog' for blog.{{ selectedDomain?.domain }})
                                 </div>
                             </div>
                         </label>
                         <div class="flex items-center">
                             <input v-model="subForm.subdomain" type="text" placeholder="e.g. myapp"
-                                class="flex-grow bg-slate-800 border-y border-l border-white/10 rounded-l-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all">
-                            <span class="bg-slate-800 border border-white/10 rounded-r-xl px-4 py-3 text-slate-500 font-medium whitespace-nowrap">.{{ selectedDomain?.domain }}</span>
+                                class="flex-grow bg-slate-800 border-y border-l border-white/10 rounded-l-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all font-medium text-white">
+                            <span class="bg-slate-800 border border-white/10 rounded-r-xl px-4 py-3 text-slate-500 font-medium whitespace-nowrap text-sm">.{{ selectedDomain?.domain }}</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 pt-2">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
+                                Application Port
+                                <div class="group relative ml-2">
+                                    <span class="cursor-help text-slate-600 hover:text-indigo-400">?</span>
+                                    <div class="absolute bottom-full left-0 mb-2 w-48 p-2 bg-slate-800 text-[10px] rounded shadowing-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                                        The local port where your application is running. Must be unique in this tunnel.
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <span class="mr-2 text-[10px] font-bold text-slate-600 uppercase">{{ subForm.customPort ? 'Custom' : 'Auto' }}</span>
+                                <div class="relative">
+                                    <input type="checkbox" v-model="subForm.customPort" class="sr-only">
+                                    <div class="w-8 h-4 bg-slate-800 rounded-full border border-white/5"></div>
+                                    <div class="absolute left-1 top-1 w-2 h-2 rounded-full transition-transform duration-200"
+                                        :class="subForm.customPort ? 'translate-x-4 bg-indigo-500' : 'bg-slate-600'"></div>
+                                </div>
+                            </label>
+                        </div>
+                        <div v-if="subForm.customPort" class="animate-fade-in">
+                            <input v-model="subForm.port" type="number" placeholder="e.g. 8080"
+                                class="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all font-mono text-white">
+                            <p class="text-[10px] text-slate-500 mt-1">Leave empty to auto-generate if toggled.</p>
+                        </div>
+                        <div v-else class="px-4 py-3 bg-slate-800/30 border border-dashed border-white/5 rounded-xl text-slate-500 text-xs italic">
+                            Port will be automatically assigned.
                         </div>
                     </div>
                 </div>
                 <div class="flex space-x-3">
-                    <button @click="closeSubModal" class="flex-grow py-3 text-slate-400 hover:text-white transition-colors">Cancel</button>
+                    <button @click="closeSubModal" class="flex-grow py-3 text-slate-400 hover:text-white transition-colors text-sm font-bold">Cancel</button>
                     <button @click="saveSubdomain" :disabled="!subForm.subdomain || creating"
-                        class="flex-grow py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl transition-all active:scale-95 disabled:opacity-50">
-                        {{ creating ? 'Saving...' : (editingSub ? 'Update' : 'Create') }}
+                        class="flex-grow py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-black rounded-xl transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-indigo-500/20 text-sm">
+                        <span v-if="creating" class="flex items-center justify-center">
+                            <svg class="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Saving
+                        </span>
+                        <span v-else>{{ editingSub ? 'Update Mapping' : 'Create Mapping' }}</span>
                     </button>
                 </div>
             </div>
@@ -314,6 +364,7 @@ const editingSub = ref(null);
 const showAddDomain = ref(false);
 const editingDom = ref(null);
 const showResetModal = ref(false);
+const showMobileMenu = ref(false);
 
 const creating = ref(false);
 const creatingDomain = ref(false);
@@ -330,6 +381,8 @@ const domainForm = reactive({
 const subForm = reactive({
     id: null,
     subdomain: '',
+    port: '',
+    customPort: false,
 });
 
 onMounted(async () => {
@@ -436,12 +489,17 @@ const saveSubdomain = async () => {
     if (!subForm.subdomain || !selectedDomain.value) return;
     creating.value = true;
     try {
+        const payload = { 
+            subdomain: subForm.subdomain,
+            port: subForm.customPort ? subForm.port : null
+        };
+
         if (editingSub.value) {
-            await axios.put(`/api/v1/subdomains/${subForm.id}`, { subdomain: subForm.subdomain });
+            await axios.put(`/api/v1/subdomains/${subForm.id}`, payload);
         } else {
             await axios.post('/api/v1/subdomains', {
-                domain_id: selectedDomain.value.id,
-                subdomain: subForm.subdomain
+                ...payload,
+                domain_id: selectedDomain.value.id
             });
         }
         closeSubModal();
@@ -457,6 +515,8 @@ const editSubdomain = (sub) => {
     editingSub.value = true;
     subForm.id = sub.id;
     subForm.subdomain = sub.subdomain;
+    subForm.port = sub.port;
+    subForm.customPort = true; // Always show port when editing
     showAddSubdomain.value = true;
 };
 
@@ -475,6 +535,8 @@ const closeSubModal = () => {
     editingSub.value = null;
     subForm.id = null;
     subForm.subdomain = '';
+    subForm.port = '';
+    subForm.customPort = false;
 };
 
 const setMode = async (mode) => {

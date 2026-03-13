@@ -15,7 +15,8 @@ FlareBridge is protected by **Laravel Sanctum**. To use the API, you must provid
 
 ## 🚀 Key Features
 
--   **Multi-Domain Architecture**: Manage multiple root domains, Cloudflare Zones, and Tunnels from a single instance.
+-   **Custom Port Control**: Option to manually assign ports or let FlareBridge auto-generate them.
+-   **Fully Responsive UI**: Modern dashboard optimized for mobile, tablet, and desktop view.
 -   **Automated DNS Sync**: Automatically creates/updates CNAME records for subdomains.
 -   **Tunnel Ingress Automation**: Updates Cloudflare Tunnel ingress rules instantly upon subdomain changes.
 -   **Credential Validation**: Automatically verifies Cloudflare tokens, zone IDs, and account IDs before saving.
@@ -27,8 +28,8 @@ FlareBridge is protected by **Laravel Sanctum**. To use the API, you must provid
 
 - **Backend**: Laravel 10 (PHP 8.1+)
 - **Frontend**: Vue 3 + Vite (SPA)
+- **Styling**: Tailwind CSS (Premium Glassmorphism)
 - **Security**: Laravel Sanctum (Auth)
-- **Integration**: Cloudflare API Integration
 
 ## 🔑 Smart Onboarding & Integration
 
@@ -41,20 +42,17 @@ FlareBridge features a **Modern Onboarding Flow**.
 
 ## 📋 API Reference (v1)
 
-| Method | Endpoint | Description | Auth |
-| :--- | :--- | :--- | :--- |
-| **POST** | `/api/login` | Authenticate and get token | No |
-| **POST** | `/api/logout` | Revoke current access token | Yes |
-| **GET** | `/api/v1/domains` | List all root domains | Yes |
-| **POST** | `/api/v1/domains` | Register new domain (w/ Validation) | Yes |
-| **PUT** | `/api/v1/domains/{id}` | Update domain settings | Yes |
-| **DELETE** | `/api/v1/domains/{id}` | Delete domain (Must be empty) | Yes |
-| **GET** | `/api/v1/subdomains` | List all subdomain mappings | Yes |
-| **POST** | `/api/v1/subdomains` | Create new mapping (Generates port) | Yes |
-| **PUT** | `/api/v1/subdomains/{id}` | Update mapping (Syncs with Cloudflare) | Yes |
-| **DELETE** | `/api/v1/subdomains/{id}` | Remove mapping and DNS record | Yes |
-| **POST** | `/api/v1/system/reset` | Wipe all data & return to onboarding | Yes |
-| **POST** | `/api/v1/system/token/renew` | Rotate your API Access Token | Yes |
+| Method | Endpoint | Description | Payload Example | Auth |
+| :--- | :--- | :--- | :--- | :--- |
+| **POST** | `/api/login` | Authenticate and get token | `{ "email": "...", "password": "..." }` | No |
+| **GET** | `/api/v1/domains` | List all root domains | - | Yes |
+| **POST** | `/api/v1/domains` | Register new domain | `{ "domain": "example.com", ... }` | Yes |
+| **GET** | `/api/v1/subdomains` | List all subdomain mappings | - | Yes |
+| **POST** | `/api/v1/subdomains` | Create new mapping | `{ "domain_id": 1, "subdomain": "app", "port": 8080 }` | Yes |
+| **PUT** | `/api/v1/subdomains/{id}` | Update mapping/port | `{ "subdomain": "blog", "port": 9000 }` | Yes |
+| **DELETE** | `/api/v1/subdomains/{id}` | Remove mapping & DNS | - | Yes |
+| **POST** | `/api/v1/system/reset` | Wipe all data & restart | - | Yes |
+| **POST** | `/api/v1/system/token/renew` | Rotate API Token | - | Yes |
 
 ---
 Built with ❤️ for Cloudflare power users.
