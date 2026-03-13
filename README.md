@@ -4,7 +4,7 @@
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.md)
 
-REST API project built with Laravel 10 to manage dynamic subdomain routing for **Cloudflare Zero Trust Tunnel**. FlareBridge acts as a smart registry
+FlareBridge is a professional REST API and Modern Dashboard built with Laravel 10 and Vue 3 to manage dynamic subdomain routing for **Cloudflare Zero Trust Tunnel**. FlareBridge acts as a smart registry and management hub for mapping subdomains to unique server ports, simplifying port-based routing for tunneling services.
 
 ## 🔒 API Security
 
@@ -33,30 +33,35 @@ Add the following header to all API requests:
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Laravel 10 (PHP 8.1)
-- **Database**: MySQL
-- **Integration**: Cloudflare API (Optional for automation)
+- **Backend**: Laravel 10 (PHP 8.1+)
+- **Frontend**: Vue 3 + Vite (SPA)
+- **Security**: Laravel Sanctum (Token-Based Auth)
+- **Database**: MySQL / MariaDB
+- **Integration**: Cloudflare API Integration
 
-## 🔑 Cloudflare Integration & Tokens
+## 🔑 Smart Onboarding & Integration
 
-Aplikasi ini **otomatis** melakukan sinkronisasi dengan Cloudflare. Pastikan bos mengisi token berikut di `.env`:
+FlareBridge features a **Modern Onboarding Flow**. You no longer need to manually edit `.env` for Cloudflare credentials.
 
-1. **Cloudflare API Token**:
-   - Ke [Dash Cloudflare - API Tokens](https://dash.cloudflare.com/profile/api-tokens).
-   - Buat token dengan permission `Zone.DNS` dan `Zone.Zone`.
-2. **Account ID & Zone ID**:
-   - Bisa dilihat di halaman **Overview** domain bos di dashboard Cloudflare (sebelah kanan bawah).
-3. **Tunnel ID**:
-   - Didapat saat bos bikin tunnel di `Cloudflare Zero Trust -> Access -> Tunnels`.
+1.  **Run the App**: Start `php artisan serve` and `npm run dev`.
+2.  **Setup Wizard**: Open your browser. The app will detect if it's the first run and guide you through entering:
+    -   Cloudflare Email & API Token.
+    -   Admin Account Registration.
+    -   Initial Domain Configuration.
+3.  **Automatic Sync**: Once setup is complete, FlareBridge will handle all DNS and Tunnel Ingress updates automatically.
 
-## 📋 API Reference
+## 📋 API Reference (v1)
 
-| Endpoint | Method | Description |
-| :--- | :--- | :--- |
-| `/api/v1/domains` | `POST` | Register a new domain for subdomain management |
-| `/api/v1/subdomains` | `GET` | Retrieve all registered subdomains |
-| `/api/v1/subdomains` | `POST` | Create a new subdomain (Auto-assigns port) |
-| `/api/v1/subdomains/{id}` | `DELETE` | Remove a subdomain mapping |
+| Endpoint | Method | Description | Auth |
+| :--- | :--- | :--- | :--- |
+| `/api/onboarding-check` | `GET` | Check if setup is completed | No |
+| `POST` | `/api/setup` | Run initial setup & admin registration | No |
+| `/api/v1/domains` | `GET` | List all managed domains | Yes |
+| `/api/v1/domains` | `POST` | Register a new domain config | Yes |
+| `/api/v1/subdomains` | `GET` | Retrieve all registered subdomains | Yes |
+| `/api/v1/subdomains` | `POST` | Create a new subdomain (Auto-sync) | Yes |
+| `/api/v1/subdomains/{id}` | `DELETE` | Remove a subdomain mapping | Yes |
+| `/api/v1/settings` | `GET/POST` | Manage app settings & UI mode | Yes |
 
 ### Example Request (Domain Management)
 `POST /api/v1/domains`
