@@ -53,6 +53,7 @@ API ini dirancang untuk berintegrasi dengan **Cloudflare Zero Trust Tunnel**.
 3. **Health Check**: Endpoint for monitoring whether local services are reachable.
 4. [DONE] **Auth / API Key**: Secure Login/Logout and Token Management using Sanctum.
 5. **Log Monitoring**: Visualizing Cloudflare logs directly in the dashboard.
+6. [DONE] **Multi-language Support**: Seamless switching between English (EN) and Indonesian (ID).
 
 ---
 
@@ -73,7 +74,16 @@ API ini dirancang untuk berintegrasi dengan **Cloudflare Zero Trust Tunnel**.
 | `POST` | `/api/v1/system/reset` | Wipe all data & restart onboarding |
 | `POST` | `/api/v1/system/token/renew`| Rotate current Access Token |
 
-**Contoh Payload POST:**
+**Contoh Payload POST (Manual Port):**
+```json
+{
+    "domain_id": 1,
+    "subdomain": "backend-api",
+    "port": 8080
+}
+```
+
+**Contoh Payload POST (Auto Port):**
 ```json
 {
     "domain_id": 1,
