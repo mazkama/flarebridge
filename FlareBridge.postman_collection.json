@@ -163,7 +163,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"domain\": \"another-domain.id\",\n    \"zone_id\": \"YOUR_ZONE_ID\",\n    \"account_id\": \"YOUR_ACCOUNT_ID\",\n    \"tunnel_id\": \"YOUR_TUNNEL_ID\"\n}"
+							"raw": "{\n    \"domain\": \"another-domain.id\",\n    \"name\": \"Home Server\",\n    \"zone_id\": \"YOUR_ZONE_ID\",\n    \"account_id\": \"YOUR_ACCOUNT_ID\",\n    \"tunnel_id\": \"YOUR_TUNNEL_ID\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/domains",
@@ -260,9 +260,51 @@
 					"name": "Create Subdomain",
 					"request": {
 						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"domain_id\": 1,\n    \"subdomain\": \"myapp\",\n    \"port\": 8080\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/subdomains",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"subdomains"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Subdomain (Bulk)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"subdomains\": [\n        {\n            \"domain_id\": 1,\n            \"subdomain\": \"api\",\n            \"port\": 3000\n        },\n        {\n            \"domain_id\": 1,\n            \"subdomain\": \"web\",\n            \"port\": 3001\n        }\n    ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/subdomains",

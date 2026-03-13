@@ -24,6 +24,7 @@ FlareBridge is protected by **Laravel Sanctum**. To use the API, you must provid
 -   **Credential Validation**: Real-time verification of Cloudflare tokens during setup.
 -   **Secure Authentication**: Session protection via Laravel Sanctum.
 -   **Multi-tunnel Mapping**: Use one domain with multiple different Cloudflare Tunnels simultaneously.
+-   **Bulk Subdomain API**: Create multiple subdomain mappings in a single API request for high-scale automation.
 -   **Clean API Structure**: Standardized `/api/v1/` versioning for all endpoints.
 
 ## 🛠️ Tech Stack
