@@ -87,6 +87,9 @@ class DomainController extends Controller
 
         $domain = \App\Models\Domain::create($domainData);
 
+        // Import existing ingress settings for this domain from Cloudflare to local DB
+        $this->cloudflare->importExistingIngress($domain);
+
         return response()->json([
             'status' => 'success',
             'message' => 'Domain created successfully',

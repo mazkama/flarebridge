@@ -59,6 +59,9 @@ router.beforeEach(async (to, from, next) => {
         next();
     } catch (error) {
         console.error('Router check failed:', error);
+        if (to.path !== '/onboarding') {
+            return next('/onboarding');
+        }
         next();
     }
 });

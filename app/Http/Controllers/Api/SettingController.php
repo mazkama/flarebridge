@@ -97,7 +97,10 @@ class SettingController extends Controller
         );
 
         // 4. Create First Domain
-        \App\Models\Domain::create($request->domain);
+        $domain = \App\Models\Domain::create($request->domain);
+
+        // Import existing ingress settings for this domain from Cloudflare to local DB
+        $this->cloudflare->importExistingIngress($domain);
 
         // 5. Generate Token
         $token = $user->createToken('flare-admin-token')->plainTextToken;
@@ -114,13 +117,23 @@ class SettingController extends Controller
 
     public function checkOnboarding()
     {
-        $onboardingCompleted = \App\Models\Setting::get('onboarding_completed', false);
-        return response()->json([
-            'status' => 'success',
-            'data' => [
-                'onboarding_completed' => (bool)$onboardingCompleted
-            ]
-        ]);
+        try {
+            $onboardingCompleted = \App\Models\Setting::get('onboarding_completed', false);
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'onboarding_completed' => (bool)$onboardingCompleted
+                ]
+            ]);
+        } catch (\Exception $e) {
+            // Return false if database/table settings is not found or connection fails
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'onboarding_completed' => false
+                ]
+            ]);
+        }
     }
 
     public function resetSystem(Request $request)
